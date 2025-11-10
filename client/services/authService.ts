@@ -1,9 +1,10 @@
 // services/authService.ts
 import axios from "axios";
 
+// Use environment variable for API URL
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
-  withCredentials: true, // ✅ Important for cookies
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // <-- production-safe
+  withCredentials: true, // important for cookies/session
 });
 
 // -------------------- Types --------------------
@@ -25,8 +26,6 @@ interface UserResponse {
   isAdmin: boolean;
 }
 
-
-
 // Login
 export const loginUser = async (data: LoginData): Promise<UserResponse> => {
   const res = await API.post<UserResponse>("/auth/login", data);
@@ -41,5 +40,5 @@ export const signupUser = async (data: SignupData): Promise<UserResponse> => {
 
 // Logout
 export const logoutUser = async (): Promise<void> => {
-  await API.post("/auth/logout"); // cookie will be cleared by backend
+  await API.post("/auth/logout"); // cookie cleared by backend
 };
