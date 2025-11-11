@@ -67,7 +67,7 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile toggle button */}
+  
       {isMobile && (
         <button
           className="fixed top-4 left-4 z-50 bg-gray-900 text-white p-2 rounded-md"
@@ -77,22 +77,22 @@ export default function AdminSidebar() {
         </button>
       )}
 
-      {/* Sidebar */}
+     
       <motion.aside
         className="h-screen w-64 bg-gray-900 text-gray-100 flex flex-col justify-between shadow-lg fixed left-0 top-0 p-5 z-40 md:static md:translate-x-0"
         variants={sidebarVariants}
         initial="hidden"
         animate={isMobile ? (isOpen ? "visible" : "hidden") : "visible"}
       >
-        {/* Header */}
+      
         <div>
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-white">Hi, Admin</h1>
-            <p className="text-gray-400 text-sm">Welcome to your dashboard</p>
+            <p className="text-gray-400 text-sm">Welcome to your dashboard!</p>
             <p className="text-gray-500 text-xs mt-1">{formattedDate}</p>
           </div>
 
-          {/* Navigation Links */}
+        
           <motion.nav
             className="flex flex-col gap-2"
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
