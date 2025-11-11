@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import AdminSidebar from "../../../components/AdminSidebar";
 import { useRouter } from "next/navigation";
+import API from "../../../lib/api"; // centralized axios instance
 
 export default function DashboardLayout({
   children,
@@ -16,7 +17,7 @@ export default function DashboardLayout({
   const [adminName, setAdminName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  
+  // Track window width
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     handleResize();
@@ -25,24 +26,18 @@ export default function DashboardLayout({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  
+  // Fetch admin info
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const res = await fetch(`${apiUrl}/api/admin/me`, {
-          method: "GET",
-          credentials: "include", 
-        });
+        const { data } = await API.get("/admin/me");
 
-        if (!res.ok) {
-         
+        if (!data || !data.name) {
           router.push("/admin/login");
           return;
         }
 
-        const data = await res.json();
-        setAdminName(data.name); 
+        setAdminName(data.name);
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch admin:", error);
@@ -64,9 +59,10 @@ export default function DashboardLayout({
   const showSidebar = sidebarOpen || windowWidth > 768;
 
   return (
-    <div className="flex min-h-screen bg-gray-100"
-    style={{ fontFamily: "Playfair Display, serif" }}>
-    
+    <div
+      className="flex min-h-screen bg-gray-100"
+      style={{ fontFamily: "Playfair Display, serif" }}
+    >
       <AnimatePresence>
         {showSidebar && (
           <motion.aside
@@ -81,28 +77,22 @@ export default function DashboardLayout({
         )}
       </AnimatePresence>
 
-      
       <div className="flex-1 flex flex-col">
-      
         <header className="flex items-center justify-between bg-white shadow px-4 py-3 md:px-6">
           <div className="flex items-center gap-2">
-           
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="md:hidden p-2 rounded-md border border-gray-300 hover:bg-gray-200 transition"
             >
               {sidebarOpen ? "✖" : "☰"}
             </button>
-            <h1 className="text-lg font-semibold text-gray-700">
-              Dashboard
-            </h1>
+            <h1 className="text-lg font-semibold text-gray-700">Dashboard</h1>
           </div>
 
-        
           <div className="flex items-center gap-3">
             {adminName ? (
               <div className="hidden md:block text-gray-700 text-sm font-medium">
-                Welcome back, <span className="font-semibold">{adminName}</span> 
+                Welcome back, <span className="font-semibold">{adminName}</span>
               </div>
             ) : (
               <div className="text-gray-400 text-sm">Admin</div>
@@ -110,7 +100,6 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        
         <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
       </div>
     </div>

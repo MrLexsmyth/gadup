@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import API from "../lib/api"; // Axios instance
 
 interface Product {
   _id: string;
@@ -17,35 +18,23 @@ interface Product {
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user, loading: authLoading } = useAuth(); // use AuthContext loading
+  const { user, loading: authLoading } = useAuth();
   const { addToCart } = useCart();
 
-  useEffect(() => {
-  fetch(`${process.env.NEXT_PUBLIC_API_URL}/test`)
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.error("Connection failed ❌", err));
-}, []);
-
-
-  // Fetch products
+  // Fetch products from backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
-          credentials: "include",
-        });
-        if (!res.ok) throw new Error("Failed to fetch products");
-        const data: Product[] = await res.json();
-
-        const shuffled = data.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 6);
+        const { data } = await API.get<Product[]>("/products"); // Axios automatically parses JSON
+        // Shuffle and pick 6 random products
+        const selected = data.sort(() => 0.5 - Math.random()).slice(0, 6);
         setProducts(selected);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
       } finally {
         setLoading(false);
       }
@@ -58,7 +47,7 @@ export default function FeaturedProducts() {
   if (!products.length) return <p className="p-6 text-center">No products available.</p>;
 
   const handleAddToCart = (product: Product) => {
-    if (authLoading) return; // wait until auth state is loaded
+    if (authLoading) return;
 
     if (!user) {
       router.push(`/auth/login?redirect=${pathname}`);
@@ -93,20 +82,21 @@ export default function FeaturedProducts() {
                            opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0
                            transition-all duration-500 ease-out cursor-pointer"
               >
-               <button
-  className="font-medium text-sm cursor-pointer"
-  onClick={() => handleAddToCart(product)}
-  disabled={authLoading} 
-  style={{ opacity: authLoading ? 0.5 : 1, cursor: authLoading ? "not-allowed" : "pointer" }}
->
-  {authLoading ? "Checking..." : "Add to Cart"}
-</button>
-
+                <button
+                  className="font-medium text-sm"
+                  onClick={() => handleAddToCart(product)}
+                  disabled={authLoading}
+                  style={{
+                    opacity: authLoading ? 0.5 : 1,
+                    cursor: authLoading ? "not-allowed" : "pointer",
+                  }}
+                >
+                  {authLoading ? "Checking..." : "Add to Cart"}
+                </button>
               </div>
             </div>
 
             <h3 className="font-semibold mt-3">{product.name}</h3>
-
             <p className="text-red-600 font-semibold mt-1">
               ₦{Number(product.price).toLocaleString()}
             </p>

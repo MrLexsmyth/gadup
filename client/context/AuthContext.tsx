@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import API from "../lib/api"; // ✅ use shared Axios instance
 
 interface UserType {
   _id: string;
@@ -21,29 +22,21 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-      
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const res = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/admin/me`, {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
-          setUser(null);
-        }
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false); // <-- important
-      }
+     try {
+  const res = await API.get<UserType>("/admin/me");
+  setUser(res.data);
+} catch {
+  setUser(null); // no 'err' needed
+} finally {
+  setLoading(false);
+}
+
     };
 
     fetchUser();

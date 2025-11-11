@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import API from "../../../lib/api"; // centralized axios instance
 
 interface LoginResponse {
   message: string;
@@ -24,25 +25,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-
-       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-         
-        
-      const res = await fetch(`${apiUrl}/admin/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include", // ✅ needed for cookie-based auth
+      const { data } = await API.post<LoginResponse>("/admin/login", {
+        email,
+        password,
       });
 
-      // ✅ Safely parse JSON
-      const data: LoginResponse | { message: string } = await res.json();
-
-      if (!res.ok) {
-        throw new Error("message" in data ? data.message : "Login failed");
+      if (!data || !data.user) {
+        throw new Error(data?.message || "Login failed");
       }
 
-      
+      // Redirect to dashboard
       window.location.href = "/admin/dashboard";
     } catch (err) {
       if (err instanceof Error) {

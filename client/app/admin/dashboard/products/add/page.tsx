@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { EditorContent, useEditor, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
-import Image from "@tiptap/extension-image";
+import ImageExtension from "@tiptap/extension-image";
+import API from "../../../../../lib/api"; // centralized axios instance
 
 interface ProductForm {
   name: string;
@@ -33,9 +34,8 @@ export default function AddProductPage() {
   const [image, setImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
-
   const editor: Editor | null = useEditor({
-    extensions: [StarterKit, Link, Image],
+    extensions: [StarterKit, Link, ImageExtension],
     content: "",
     onUpdate: ({ editor }) =>
       setFormData((prev) => ({ ...prev, description: editor.getHTML() })),
@@ -55,43 +55,30 @@ export default function AddProductPage() {
     }));
   };
 
- 
   const uploadImage = async () => {
     if (!image) {
       alert("Please select an image");
       return null;
     }
-
     const formDataObj = new FormData();
     formDataObj.append("image", image);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      
-    const res = await fetch(`${apiUrl}/upload`, {
-      method: "POST",
-      body: formDataObj,
-      credentials: "include",
+    const { data } = await API.post("/upload", formDataObj, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
 
-    if (!res.ok) throw new Error("Image upload failed");
-    return res.json(); 
+    return data; // { url, public_id }
   };
 
- 
   const insertLocalImage = async (file: File) => {
     const formDataObj = new FormData();
     formDataObj.append("image", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
-        method: "POST",
-        body: formDataObj,
-        credentials: "include",
+      const { data } = await API.post("/upload", formDataObj, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (!res.ok) throw new Error("Image upload failed");
-
-      const data = await res.json(); // { url, public_id }
       if (editor) editor.chain().focus().setImage({ src: data.url }).run();
     } catch (err) {
       alert("Failed to upload image for editor");
@@ -107,18 +94,11 @@ export default function AddProductPage() {
       const imageData = await uploadImage();
       if (!imageData) return;
 
-      const res = await fetch("http://localhost:5000/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          imageUrl: imageData.url,
-          imagePublicId: imageData.public_id,
-        }),
-        credentials: "include",
+      await API.post("/products", {
+        ...formData,
+        imageUrl: imageData.url,
+        imagePublicId: imageData.public_id,
       });
-
-      if (!res.ok) throw new Error("Failed to add product");
 
       alert("✅ Product added successfully!");
       router.push("/admin/dashboard/products");
@@ -144,7 +124,6 @@ export default function AddProductPage() {
           required
         />
 
-       
         <label className="block mb-2">
           Insert Image in Description:
           <input
@@ -158,9 +137,7 @@ export default function AddProductPage() {
           />
         </label>
 
-        <div className="border rounded">
-          {editor && <EditorContent editor={editor} />}
-        </div>
+        <div className="border rounded">{editor && <EditorContent editor={editor} />}</div>
 
         <input
           type="number"
@@ -185,7 +162,6 @@ export default function AddProductPage() {
           <option value="laptops">Laptops</option>
           <option value="gaming">Gaming Accessories</option>
           <option value="accessories">General Accessories</option>
-          
         </select>
 
         <input

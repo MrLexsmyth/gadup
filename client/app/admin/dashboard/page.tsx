@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import API from "../../../lib/api"; // use centralized axios instance
 
 export default function Dashboard() {
   const [user, setUser] = useState<{ name?: string } | null>(null);
@@ -11,24 +12,14 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-
-         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-         
-        const res = await fetch(`${apiUrl}/admin/dashboard`, {
-          method: "GET",
-          credentials: "include", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const { data } = await API.get("/admin/dashboard");
 
         // if user not authenticated, redirect
-        if (res.status === 401 || res.status === 403) {
+        if (!data || (!data.user && !data.admin)) {
           router.push("/admin/login");
           return;
         }
 
-        const data = await res.json();
         setUser(data.user || data.admin || null);
       } catch (error) {
         console.error("Error fetching admin:", error);
@@ -65,10 +56,7 @@ export default function Dashboard() {
 
         <button
           onClick={async () => {
-            await fetch("http://localhost:5000/api/auth/logout", {
-              method: "POST",
-              credentials: "include", // ✅ clear cookies
-            });
+            await API.post("/auth/logout"); // logout via centralized API
             router.push("/admin/login");
           }}
           className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition"

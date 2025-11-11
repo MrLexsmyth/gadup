@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import API from "../../../../lib/api"; // import shared Axios instance
 
 interface Product {
   _id: string;
   name: string;
   price: number;
   category: string;
-  image: { url: string };
+  image?: { url: string };
 }
 
 export default function CategoryPage() {
@@ -22,13 +23,13 @@ export default function CategoryPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?category=${categoryName}`, {
-          credentials: "include",
-        });
-        const data = await res.json();
+        // Use API.get to automatically handle baseURL and credentials
+        const { data } = await API.get<Product[]>(
+          `/products?category=${encodeURIComponent(categoryName)}`
+        );
         setProducts(data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch products:", err);
       } finally {
         setLoading(false);
       }
@@ -41,7 +42,9 @@ export default function CategoryPage() {
 
   return (
     <div className="px-6 py-8">
-      <h1 className="text-2xl font-bold mb-6 capitalize">{categoryName.replace('-', ' ')}</h1>
+      <h1 className="text-2xl font-bold mb-6 capitalize">
+        {categoryName.replace("-", " ")}
+      </h1>
 
       {products.length === 0 ? (
         <p className="text-center text-gray-500">No products found.</p>
@@ -61,7 +64,9 @@ export default function CategoryPage() {
                 />
               </div>
               <h3 className="font-semibold mt-3">{product.name}</h3>
-              <p className="text-gray-600">₦{Number(product.price).toLocaleString()}</p>
+              <p className="text-gray-600">
+                ₦{Number(product.price).toLocaleString()}
+              </p>
             </div>
           ))}
         </div>

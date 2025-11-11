@@ -6,9 +6,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
 import CartDrawer from "./CartDrawer";
-import axios from "axios";
 import { ShoppingCart, User, Menu, X, LogIn, UserPlus, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import API from "../lib/api"; // use your Axios instance
 
 const categories = [
   { name: "Home", link: "/" },
@@ -35,25 +35,26 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Load user from localStorage asynchronously
+  // Fetch current user from backend
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const loadUser = () => {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) setUser(JSON.parse(storedUser));
-      setLoadingUser(false);
+    const fetchUser = async () => {
+      try {
+        const { data } = await API.get("/auth/me"); // make sure your backend route returns current user
+        setUser(data || null);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoadingUser(false);
+      }
     };
-    const id = setTimeout(loadUser, 0);
-    return () => clearTimeout(id);
+    fetchUser();
   }, [setUser]);
 
-  
   // Logout function
   const handleLogout = async () => {
     try {
-      await axios.post( `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {}, { withCredentials: true });
+      await API.post("/auth/logout"); // Axios instance handles credentials
       clearCart();
-      localStorage.removeItem("user");
       setUser(null);
       router.push("/");
     } catch (err) {
@@ -61,7 +62,7 @@ export default function Navbar() {
     }
   };
 
-  // Render user menu (DRY)
+  // Render user menu
   const renderUserMenu = () => {
     if (loadingUser) return null;
 
@@ -69,12 +70,12 @@ export default function Navbar() {
       return (
         <>
           <Link href="/auth/login">
-            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100  ">
+            <button className="w-full flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
               <LogIn /> Sign In
             </button>
           </Link>
           <Link href="/auth/signup">
-            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg ">
+            <button className="w-full flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg">
               <UserPlus /> Sign Up
             </button>
           </Link>
@@ -85,12 +86,12 @@ export default function Navbar() {
     return (
       <>
         <Link href="/profile">
-          <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
+          <button className="w-full flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
             <UserPlus /> Account
           </button>
         </Link>
         <button
-          className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-red-900 font-medium rounded-lg "
+          className="w-full flex items-center gap-2 py-2 px-3 text-sm text-red-900 font-medium rounded-lg"
           onClick={handleLogout}
         >
           <LogOut /> Log Out

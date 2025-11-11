@@ -1,24 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
 import { useCart } from "../../../context/CartContext";
-import { useRouter, usePathname } from "next/navigation";
 import { Playfair_Display } from "next/font/google";
+import API from "../../../lib/api"; // use shared Axios instance
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
 
-
 interface Product {
   _id: string;
   name: string;
-  image: { url: string };
+  image?: { url: string };
   price: number;
   category: string;
 }
@@ -39,25 +38,23 @@ export default function CategoryPage() {
     setAuthLoading(false);
   }, [user]);
 
-  // ✅ Fetch all products
+  // Fetch all products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get<Product[]>(
-        ` ${process.env.NEXT_PUBLIC_API_URL}/products`
-        );
+        const { data } = await API.get<Product[]>("/products");
 
         setProducts(data);
 
-        // ✅ Safely extract unique categories
         const uniqueCategories: string[] = [
           "all",
           ...Array.from(
             new Set(
-              data.map((p) =>
-                typeof p.category === "string" && p.category.trim()
-                  ? p.category.trim()
-                  : "Uncategorized"
+              data.map(
+                (p) =>
+                  typeof p.category === "string" && p.category.trim()
+                    ? p.category.trim()
+                    : "Uncategorized"
               )
             )
           ),
@@ -74,7 +71,6 @@ export default function CategoryPage() {
     fetchProducts();
   }, []);
 
-  // ✅ Filter by category
   const filteredProducts =
     selectedCategory === "all"
       ? products
@@ -94,86 +90,80 @@ export default function CategoryPage() {
   if (loading) return <p className="p-6 text-center">Loading products...</p>;
 
   return (
-   <div className={playfair.className }>
+    <div className={playfair.className}>
+      <div className="max-w-7xl mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-4">All Products</h1>
 
-   
-    <div className= "max-w-7xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">All Products</h1>
-
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full border text-sm capitalize transition ${
-              selectedCategory === cat
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 hover:bg-gray-200"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-    
-      {filteredProducts.length === 0 ? (
-        <p>No products found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div
-              key={product._id}
-              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full border text-sm capitalize transition ${
+                selectedCategory === cat
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 hover:bg-gray-200"
+              }`}
             >
-              <div className="relative w-full h-56 bg-gray-100 group">
-                <Image
-                  src={product.image?.url || "/placeholder.png"}
-                  alt={product.name}
-                  fill
-                  className="object-cover rounded"
-                />
-
-                
-                <div
-                  className="absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
-                            opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0
-                            transition-all duration-500 ease-out cursor-pointer"
-                >
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={authLoading}
-                    className="font-medium text-sm cursor-pointer"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-4">
-                <h2 className="font-semibold text-base">{product.name}</h2>
-                <p className="text-gray-500 text-sm capitalize">
-                  {product.category}
-                </p>
-                <p className="font-bold mt-1 text-red-600">
-                  ₦{product.price.toLocaleString()}
-                </p>
-
-              
-              <Link
-  href={`/products/details/${product._id}`}
-  className="text-sm text-[#00817c] font-medium hover:underline block mt-2"
->
-  View Details
-</Link>
-              </div>
-            </div>
+              {cat}
+            </button>
           ))}
         </div>
-      )}
-    </div>
+
+        {filteredProducts.length === 0 ? (
+          <p>No products found.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product) => (
+              <div
+                key={product._id}
+                className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+              >
+                <div className="relative w-full h-56 bg-gray-100 group">
+                  <Image
+                    src={product.image?.url || "/placeholder.png"}
+                    alt={product.name}
+                    fill
+                    className="object-cover rounded"
+                  />
+
+                  <div
+                    className="absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
+                            opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0
+                            transition-all duration-500 ease-out cursor-pointer"
+                  >
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={authLoading}
+                      className="font-medium text-sm cursor-pointer"
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h2 className="font-semibold text-base">{product.name}</h2>
+                  <p className="text-gray-500 text-sm capitalize">
+                    {product.category}
+                  </p>
+                  <p className="font-bold mt-1 text-red-600">
+                    ₦{product.price.toLocaleString()}
+                  </p>
+
+                  <Link
+                    href={`/products/details/${product._id}`}
+                    className="text-sm text-[#00817c] font-medium hover:underline block mt-2"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-

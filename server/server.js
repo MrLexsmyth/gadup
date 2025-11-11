@@ -12,24 +12,32 @@ import orderRoutes from "./routes/order.js";
 import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 
 dotenv.config();
-
 const app = express();
 
-// ✅ Configure CORS properly
+// ✅ Configure CORS properly for Render + Vercel
 const allowedOrigins = [
-  "http://localhost:3000",   // local dev
-  process.env.CLIENT_URL,    // vercel frontend
-  process.env.SERVER_URL,    // render backend (optional)
+  "http://localhost:3000",       // local dev
+  process.env.CLIENT_URL,        // your Vercel frontend
+  process.env.SERVER_URL         // your Render backend (optional)
 ].filter(Boolean);
 
 app.use(
   cors({
-    origin: allowedOrigins,
-    credentials: true, // ✅ allows cookies and auth headers
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.error("❌ CORS blocked request from:", origin);
+        return callback(new Error("Not allowed by CORS"), false);
+      }
+    },
+    credentials: true, // ✅ allow cookies/auth headers
   })
 );
 
-// Middleware
+// ✅ Middleware
 app.use(express.json());
 app.use(cookieParser());
 
@@ -58,7 +66,7 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-// Root route
+// ✅ Root route
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });

@@ -3,7 +3,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import axios from "axios";
+import API from "../../../../../../lib/api"; // centralized axios instance
 
 interface Product {
   _id: string;
@@ -27,16 +27,13 @@ export default function EditProductPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
- 
+  // Fetch product on mount
   useEffect(() => {
     if (!id) return;
 
     const fetchProduct = async () => {
       try {
-        const response = await axios.get<Product>(
-          `http://localhost:5000/api/products/${id}`
-        );
-        const data = response.data;
+        const { data } = await API.get<Product>(`/products/${id}`);
         setName(data.name);
         setDescription(data.description);
         setPrice(data.price);
@@ -57,7 +54,6 @@ export default function EditProductPage() {
     }
   };
 
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -69,8 +65,7 @@ export default function EditProductPage() {
       formData.append("price", price.toString());
       if (image) formData.append("image", image);
 
-      await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
-        withCredentials: true,
+      await API.put(`/products/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -128,23 +123,13 @@ export default function EditProductPage() {
 
         {preview && (
           <div className="mt-4">
-            {preview.startsWith("blob:") ? (
-              <Image
-                src={preview}
-                alt="Product preview"
-                width={100}
-                height={50}
-                className="rounded shadow-md object-cover"
-              />
-            ) : (
-              <Image
-                src={preview}
-                alt="Product preview"
-                width={100}
-                height={50}
-                className="rounded shadow-md object-cover"
-              />
-            )}
+            <Image
+              src={preview}
+              alt="Product preview"
+              width={100}
+              height={50}
+              className="rounded shadow-md object-cover"
+            />
           </div>
         )}
 

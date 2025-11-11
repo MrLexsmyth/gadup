@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import API from "../../../lib/api"; // use shared axios instance
 
 export default function ChangePasswordPage() {
   const router = useRouter();
@@ -16,32 +17,23 @@ export default function ChangePasswordPage() {
     setMessage("");
 
     try {
-      const token = localStorage.getItem("token");
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-      const res = await fetch(`${apiUrl}/users/change-password`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ currentPassword, newPassword }),
+      // Use your centralized API instance
+      await API.put("/users/change-password", {
+        currentPassword,
+        newPassword,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message || "Failed to change password");
 
       setMessage("✅ Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");
 
+      // Redirect after short delay
       setTimeout(() => {
         router.push("/admin/dashboard");
       }, 1500);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setMessage(`❌ ${error.message}`);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setMessage(`❌ ${err.message}`);
       } else {
         setMessage("❌ Something went wrong");
       }
