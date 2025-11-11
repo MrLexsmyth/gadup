@@ -19,7 +19,7 @@ export default function ChangePasswordPage() {
       const token = localStorage.getItem("token");
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-      const res = await fetch(`${apiUrl}/api/users/change-password`, {
+      const res = await fetch(`${apiUrl}/users/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

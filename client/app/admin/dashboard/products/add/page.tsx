@@ -65,7 +65,9 @@ export default function AddProductPage() {
     const formDataObj = new FormData();
     formDataObj.append("image", image);
 
-    const res = await fetch("http://localhost:5000/api/upload", {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      
+    const res = await fetch(`${apiUrl}/upload`, {
       method: "POST",
       body: formDataObj,
       credentials: "include",

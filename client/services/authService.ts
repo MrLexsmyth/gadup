@@ -4,7 +4,7 @@ import axios from "axios";
 // Use environment variable for API URL
 const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL, // <-- production-safe
-  withCredentials: true, // important for cookies/session
+  withCredentials: true, 
 });
 
 // -------------------- Types --------------------

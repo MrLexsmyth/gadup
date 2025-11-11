@@ -23,6 +23,10 @@ interface Order {
   address: Address; 
 }
 
+
+
+     
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +34,9 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/admin/orders", {
+
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const { data } = await axios.get(`${apiUrl}/admin/orders`, {
           withCredentials: true,
         });
         setOrders(data);
