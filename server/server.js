@@ -11,37 +11,35 @@ import userRoutes from "./routes/userRoutes.js";
 import orderRoutes from "./routes/order.js";
 import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 
-
 dotenv.config();
 
 const app = express();
 
 // ✅ Configure CORS properly
 const allowedOrigins = [
-  'http://localhost:3000',
-  process.env.SERVER_URL,
+  "http://localhost:3000",   // local dev
+  process.env.CLIENT_URL,    // vercel frontend
+  process.env.SERVER_URL,    // render backend (optional)
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: allowedOrigins,
-    credentials: true, // ✅ allows cookies (including HttpOnly)
+    credentials: true, // ✅ allows cookies and auth headers
   })
 );
 
-
 // Middleware
 app.use(express.json());
-
 app.use(cookieParser());
 
-// Connect to MongoDB
+// ✅ Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// Routes
+// ✅ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
@@ -50,11 +48,21 @@ app.use("/api/user", userRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 
-// Test Route
+// ✅ Test route (to confirm frontend-backend connection)
+app.get("/api/test", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Frontend successfully connected to backend 🎉",
+    server: process.env.SERVER_URL,
+    client: process.env.CLIENT_URL,
+  });
+});
+
+// Root route
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });
 
-// Server listen
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
