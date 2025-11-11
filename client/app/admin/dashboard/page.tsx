@@ -11,7 +11,10 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/dashboard", {
+
+         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+         
+        const res = await fetch(`${apiUrl}/admin/dashboard`, {
           method: "GET",
           credentials: "include", 
           headers: {

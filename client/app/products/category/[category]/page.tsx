@@ -22,7 +22,7 @@ export default function CategoryPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products?category=${categoryName}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?category=${categoryName}`, {
           credentials: "include",
         });
         const data = await res.json();

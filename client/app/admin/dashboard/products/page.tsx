@@ -12,13 +12,21 @@ interface Product {
   image: { url: string };
 }
 
+
+  
+      
+   
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    
     const fetchProducts = async () => {
-      const res = await fetch("http://localhost:5000/api/products", {
+      const res = await fetch(`${apiUrl}/products`, {
         credentials: "include",
       });
       const data = await res.json();
