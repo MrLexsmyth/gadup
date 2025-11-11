@@ -8,6 +8,9 @@
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "keywords": ["express", "nodejs", "mongodb", "backend", "ecommerce"],
   "author": "Odunayo Shittu",
   "license": "MIT",
