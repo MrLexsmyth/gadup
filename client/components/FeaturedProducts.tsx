@@ -23,6 +23,14 @@ export default function FeaturedProducts() {
   const { user, loading: authLoading } = useAuth(); // use AuthContext loading
   const { addToCart } = useCart();
 
+  useEffect(() => {
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}/test`)
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.error("Connection failed ❌", err));
+}, []);
+
+
   // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
