@@ -117,7 +117,7 @@ export default function CategoryPage() {
         ))}
       </div>
 
-      {/* Products Grid */}
+    
       {filteredProducts.length === 0 ? (
         <p>No products found.</p>
       ) : (
@@ -135,7 +135,7 @@ export default function CategoryPage() {
                   className="object-cover rounded"
                 />
 
-                {/* ✅ Add to Cart Overlay (same style as FeaturedProducts) */}
+                
                 <div
                   className="absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
                             opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0
@@ -160,7 +160,7 @@ export default function CategoryPage() {
                   ₦{product.price.toLocaleString()}
                 </p>
 
-                {/* Optional: View Product Button */}
+              
               <Link
   href={`/products/details/${product._id}`}
   className="text-sm text-[#00817c] font-medium hover:underline block mt-2"
