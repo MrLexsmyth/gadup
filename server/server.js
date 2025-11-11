@@ -17,12 +17,19 @@ dotenv.config();
 const app = express();
 
 // ✅ Configure CORS properly
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.SERVER_URL,
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // your Next.js app
-    credentials: true, // allow cookies / auth headers
+    origin: allowedOrigins,
+    credentials: true, // ✅ allows cookies (including HttpOnly)
   })
 );
+
 
 // Middleware
 app.use(express.json());

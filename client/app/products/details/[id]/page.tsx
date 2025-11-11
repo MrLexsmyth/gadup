@@ -40,8 +40,8 @@ export default function ProductPage() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get<Product>(
-          `http://localhost:5000/api/products/${id}`
+        const { data } = await axios.get<Product>(  
+          `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`
         );
         setProduct(data);
       } catch (err) {

@@ -21,6 +21,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
+      
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch( `${process.env.NEXT_PUBLIC_API_URL}/api/admin/me`, {
           credentials: "include",
         });
         if (res.ok) {

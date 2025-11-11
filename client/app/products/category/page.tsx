@@ -44,7 +44,7 @@ export default function CategoryPage() {
     const fetchProducts = async () => {
       try {
         const { data } = await axios.get<Product[]>(
-          "http://localhost:5000/api/products"
+        ` ${process.env.NEXT_PUBLIC_API_URL}/api/products`
         );
 
         setProducts(data);
