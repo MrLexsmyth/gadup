@@ -39,17 +39,17 @@ export default function CategoryPage() {
 
     fetchProducts();
   }, [categoryName]);
+const handleAddToCart = async (product: Product) => {
+  try {
+    setAuthLoading(true);
+    await addToCart({ ...product, quantity: 1 }); // ✅ add quantity here
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+  } finally {
+    setAuthLoading(false);
+  }
+};
 
-  const handleAddToCart = async (product: Product) => {
-    try {
-      setAuthLoading(true);
-      await addToCart(product);
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-    } finally {
-      setAuthLoading(false);
-    }
-  };
 
   if (loading) return <p className="text-center mt-6">Loading products...</p>;
 
