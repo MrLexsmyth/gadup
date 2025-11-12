@@ -106,14 +106,14 @@ export default function Navbar() {
         <div className="px-4 py-3 flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:scale-105 transition-transform duration-300">
-            <Image src="/gadup2.png" alt="Logo" width={45} height={45} className="object-contain" />
+            <Image src="/gadup2.png" alt="Logo" width={45} height={45} className="object-contain"  loading="eager"/>
             <h1 className="text-[#00817c] ml-1 font-serif text-xl font-bold">GadUp</h1>
           </Link>
 
           {/* Desktop Menu */}
-          <ul className="hidden md:flex flex-1 justify-center gap-8 font-medium text-blue-500 font-serif">
+          <ul className="hidden md:flex flex-1 justify-center gap-8 font-medium text-[#008080] font-serif">
             {categories.map((cat) => (
-              <li key={cat.name} className="hover:text-blue-700 border-b-2 border-transparent hover:border-blue-700 transition-all duration-200">
+              <li key={cat.name} className="hover:text-[#008080] border-b-2 border-transparent hover:border-green-700 transition-all duration-200">
                 <Link href={cat.link}>{cat.name}</Link>
               </li>
             ))}
@@ -160,7 +160,7 @@ export default function Navbar() {
             <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)}></div>
             <div className="fixed top-16 left-0 w-full bg-white shadow-lg rounded-b-xl flex flex-col items-center py-6 gap-4 md:hidden z-50 transition-transform duration-300">
               {categories.map((cat) => (
-                <Link key={cat.name} href={cat.link} className="w-full text-center py-2 text-gray-700 font-medium hover:text-blue-600 hover:bg-gray-100 rounded-md" onClick={() => setMenuOpen(false)}>
+                <Link key={cat.name} href={cat.link} className="w-full text-center py-2 text-[#008080] font-medium hover:text-green-600 hover:bg-gray-100 rounded-md" onClick={() => setMenuOpen(false)}>
                   {cat.name}
                 </Link>
               ))}

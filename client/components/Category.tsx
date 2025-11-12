@@ -84,7 +84,9 @@ export default function CategoryBrowser() {
                     src={cat.image}
                     alt={cat.name}
                     fill
-                    className="object-cover rounded"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover"
+                    loading="eager"
                   />
                 </div>
               )}

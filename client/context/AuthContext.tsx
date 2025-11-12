@@ -29,14 +29,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
      try {
-  const res = await API.get<UserType>("/admin/me");
+  const res = await API.get<UserType>("/auth/me");
   setUser(res.data);
 } catch {
-  setUser(null); // no 'err' needed
+  setUser(null); 
 } finally {
   setLoading(false);
 }
-
     };
 
     fetchUser();

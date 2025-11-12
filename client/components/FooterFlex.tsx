@@ -38,6 +38,8 @@ export default function ThreeSectionFlex() {
               alt={section.title}
               fill
               className="object-cover rounded-lg "
+               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        
             />
           </div>
           <h1 className="text-xl font-semibold mb-2">{section.title}</h1>

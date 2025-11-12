@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import API from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Address {
   _id?: string;
@@ -68,7 +69,8 @@ export default function UserProfilePage() {
   if (!user) return <p className="p-6 text-red-500">Failed to load profile.</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6"
+    style={{ fontFamily: "Playfair Display, serif" }}>
       {/* ---------- Left Sidebar ---------- */}
       <aside className="md:col-span-1 border rounded-lg p-4 shadow-sm bg-white">
         <h2 className="text-lg font-semibold mb-4 text-gray-800">Account</h2>
@@ -76,9 +78,9 @@ export default function UserProfilePage() {
           <li>
             <button
               onClick={() => setActiveTab("profile")}
-              className={`w-full text-left p-2 rounded-md transition ${
+              className={`w-full text-left p-2 rounded-md transition cursor-pointer ${
                 activeTab === "profile"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-[#008080] text-white"
                   : "hover:bg-gray-100 text-gray-800"
               }`}
             >
@@ -88,9 +90,9 @@ export default function UserProfilePage() {
           <li>
             <button
               onClick={() => setActiveTab("address")}
-              className={`w-full text-left p-2 rounded-md transition ${
+              className={`w-full text-left p-2 rounded-md transition cursor-pointer ${
                 activeTab === "address"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-[#008080] text-white"
                   : "hover:bg-gray-100 text-gray-800"
               }`}
             >
@@ -100,9 +102,9 @@ export default function UserProfilePage() {
           <li>
             <button
               onClick={() => setActiveTab("orders")}
-              className={`w-full text-left p-2 rounded-md transition ${
+              className={`w-full text-left p-2 rounded-md transition cursor-pointer ${
                 activeTab === "orders"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-[#008080] text-white"
                   : "hover:bg-gray-100 text-gray-800"
               }`}
             >
@@ -113,7 +115,7 @@ export default function UserProfilePage() {
       </aside>
 
       {/* ---------- Right Content Area ---------- */}
-      <section className="md:col-span-3 bg-white border rounded-lg shadow-sm p-6 min-h-[400px]">
+      <section className="md:col-span-3 bg-white border border-[#008080] rounded-lg shadow-sm p-6 min-h-[400px]">
         <AnimatePresence mode="wait">
           {activeTab === "profile" && (
             <motion.div
@@ -126,7 +128,7 @@ export default function UserProfilePage() {
               <h1 className="text-2xl font-bold mb-4">My Profile</h1>
               <div className="space-y-2">
                 <p>
-                  <strong>Name:</strong> {user.name}
+                  <strong>UserName:</strong> {user.name}
                 </p>
                 <p>
                   <strong>Email:</strong> {user.email}
@@ -165,9 +167,17 @@ export default function UserProfilePage() {
                         {addr.postalCode}, {addr.country}
                       </p>
                     </div>
-                  ))}
+                    
+                  ))
+                  }
                 </div>
+                
               )}
+              <Link href="/profile/addresses">
+  <button className="bg-[#008080] text-white font-semibold mt-4 py-2 px-4 cursor-pointer rounded hover:bg-gray-700 transition-colors duration-300">
+    Add / Delete Address
+  </button>
+</Link>
             </motion.div>
           )}
 

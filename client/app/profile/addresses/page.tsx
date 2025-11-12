@@ -114,7 +114,8 @@ export default function AddressesPage() {
   if (fetching) return <p className="p-6">Loading addresses...</p>;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto p-6"
+    style={{ fontFamily: "Playfair Display, serif" }}>
       <h1 className="text-2xl font-bold mb-4">Your Addresses</h1>
 
       {/* Address Form */}
@@ -125,7 +126,7 @@ export default function AddressesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <input
             name="label"
-            placeholder="Label (Home/Work)"
+            placeholder="Telephone Num (Home/Work)"
             value={form.label}
             onChange={handleChange}
             className="border p-2 rounded"
@@ -176,7 +177,7 @@ export default function AddressesPage() {
 
         <button
           onClick={handleSubmit}
-          className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="mt-3 bg-[#008080] text-white px-4 py-2 rounded hover:bg-green-700"
           disabled={loading}
         >
           {editingId ? "Update Address" : "Add Address"}
