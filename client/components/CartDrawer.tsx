@@ -39,7 +39,7 @@ export default function CartDrawer({
 
           {/* Drawer */}
           <motion.div
-            className={`fixed top-0 right-0 h-full w-110 bg-white shadow-lg z-50 flex flex-col ${playfair.className}`}
+            className={`fixed top-0 right-0 h-full w-95 bg-white shadow-lg z-50 flex flex-col ${playfair.className}`}
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}

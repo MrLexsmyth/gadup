@@ -8,13 +8,11 @@ const router = express.Router();
 
 const getCookieOptions = () => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // HTTPS only
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-site for prod
+  secure: process.env.NODE_ENV === "production", 
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 
-
-// ========================= SIGNUP =========================
 router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -43,7 +41,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ========================= LOGIN =========================
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -70,7 +68,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ========================= LOGOUT =========================
+
 router.post("/logout", (req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
@@ -81,7 +79,7 @@ router.post("/logout", (req, res) => {
   res.json({ message: "Logged out successfully" });
 });
 
-// ========================= GET CURRENT USER =========================
+
 router.get("/me", protect, async (req, res) => {
   try {
     res.json(req.user); // returns user info
