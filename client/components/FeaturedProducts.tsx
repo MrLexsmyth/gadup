@@ -53,7 +53,7 @@ export default function FeaturedProducts() {
         ))}
       </div>;
 
-      
+
   if (!products.length) return <p className="p-6 text-center">No products available.</p>;
 
   const handleAddToCart = (product: Product) => {
@@ -87,23 +87,27 @@ export default function FeaturedProducts() {
               />
 
               {/* Add to Cart Overlay */}
-              <div
-                className="absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
-                           opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0
-                           transition-all duration-500 ease-out cursor-pointer"
-              >
-                <button
-                  className="font-medium text-sm"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={authLoading}
-                  style={{
-                    opacity: authLoading ? 0.5 : 1,
-                    cursor: authLoading ? "not-allowed" : "pointer",
-                  }}
-                >
-                  {authLoading ? "Checking..." : "Add to Cart"}
-                </button>
-              </div>
+          <div
+  className={`
+    absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
+    opacity-0 translate-y-6 
+    group-hover:opacity-100 group-hover:translate-y-0
+    transition-all duration-500 ease-out cursor-pointer
+    sm:opacity-100 sm:translate-y-0
+  `}
+>
+  <button
+    className="font-medium text-sm"
+    onClick={() => handleAddToCart(product)}
+    disabled={authLoading}
+    style={{
+      opacity: authLoading ? 0.5 : 1,
+      cursor: authLoading ? "not-allowed" : "pointer",
+    }}
+  >
+    {authLoading ? "Checking..." : "Add to Cart"}
+  </button>
+</div>
             </div>
 
             <h3 className="font-semibold mt-3">{product.name}</h3>
