@@ -1,4 +1,6 @@
 import User from "../models/User.js";
+import Order from "../models/Order.js";
+
 import jwt from "jsonwebtoken";
 
 // Generate JWT
@@ -48,20 +50,19 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// GET /api/user/profile
 export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-    if (user) {
-      res.json(user); // sends back the user document (name, email, addresses, isAdmin)
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Fetch orders for this user
+    const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
+
+    res.json({ ...user.toObject(), orders }); // include orders in response
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 // Add/Edit/Delete Address
 export const updateAddress = async (req, res) => {
   try {
