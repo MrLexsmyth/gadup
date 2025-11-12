@@ -6,13 +6,13 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Helper: Cookie options
 const getCookieOptions = () => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",   // HTTPS only in prod
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-site in prod
+  secure: process.env.NODE_ENV === "production", // HTTPS only
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-site for prod
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
+
 
 // ========================= SIGNUP =========================
 router.post("/signup", async (req, res) => {

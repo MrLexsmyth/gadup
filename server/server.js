@@ -19,23 +19,19 @@ const app = express();
 
 // ✅ Allowed origins
 const allowedOrigins = [
-  "http://localhost:3000",       // Local dev
-  "https://gadup.vercel.app",    // Vercel frontend
-].filter(Boolean);
+  "http://localhost:3000",
+  "https://gadup.vercel.app"
+];
 
-// ✅ CORS configuration
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (curl, mobile apps)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      console.error("❌ CORS blocked request from:", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true, // allow cookies/auth headers
-  })
-);
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow curl, mobile apps
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true, // allow cookies
+}));
+
 
 // ✅ Middleware
 app.use(express.json());
