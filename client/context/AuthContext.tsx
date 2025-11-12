@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import API from "../lib/api"; // ✅ use shared Axios instance
+import API from "../lib/api";  
 
 interface UserType {
   _id: string;

@@ -44,6 +44,7 @@ export default function Slide() {
             src={slides[index].image}
             alt={slides[index].text}
             fill
+            loading="eager"
             className="object-cover"
           />
 

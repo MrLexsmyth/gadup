@@ -15,12 +15,13 @@ router.post("/login", async (req, res) => {
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(user);
 
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+    res.cookie("jwt", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // keep secure for HTTPS
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
 
       res.json({
         _id: user._id,
