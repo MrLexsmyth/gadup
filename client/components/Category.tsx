@@ -46,7 +46,8 @@ const itemVariants: Variants = {
 
 export default function CategoryBrowser() {
   return (
-    <div className="px-16 py-8">
+    <div className="px-16 py-8"
+     style={{ fontFamily: "Playfair Display, serif" }}>
       <div className="w-full h-[1px] bg-gray-400 my-4"></div>
       {/* <h3
        className="text-xl font-boldtext-start mt-12"
@@ -80,6 +81,7 @@ export default function CategoryBrowser() {
             >
               {cat.image && (
                 <div className="w-16 h-16 mb-2 relative">
+
                   <Image
                     src={cat.image}
                     alt={cat.name}
@@ -88,6 +90,7 @@ export default function CategoryBrowser() {
                     className="object-cover"
                     loading="eager"
                   />
+                  
                 </div>
               )}
               <span className="text-sm font-medium text-gray-700">
