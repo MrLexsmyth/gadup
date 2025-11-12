@@ -1,11 +1,49 @@
+// routes/authRoutes.js
 import express from "express";
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
-import { protect } from "../middleware/authMiddleware.js"; // 👈 add this
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ✅ POST /api/auth/login
+// Helper: Cookie options
+const getCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",   // HTTPS only in prod
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // cross-site in prod
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
+
+// ========================= SIGNUP =========================
+router.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const user = await User.create({ name, email, password });
+    if (!user) return res.status(400).json({ message: "Invalid user data" });
+
+    const token = generateToken(user);
+
+    res.cookie("jwt", token, getCookieOptions());
+
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
+  } catch (error) {
+    console.error("Signup Error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+// ========================= LOGIN =========================
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -15,13 +53,7 @@ router.post("/login", async (req, res) => {
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(user);
 
-    res.cookie("jwt", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // keep secure for HTTPS
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
-
+      res.cookie("jwt", token, getCookieOptions());
 
       res.json({
         _id: user._id,
@@ -34,60 +66,27 @@ router.post("/login", async (req, res) => {
     }
   } catch (error) {
     console.error("Login Error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
-// ✅ POST /api/auth/signup
-router.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
-
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    const user = await User.create({ name, email, password });
-
-    if (user) {
-      const token = generateToken(user);
-
-      res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      });
-    } else {
-      res.status(400).json({ message: "Invalid user data" });
-    }
-  } catch (error) {
-    console.error("Signup Error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// ✅ POST /api/auth/logout
+// ========================= LOGOUT =========================
 router.post("/logout", (req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
   res.json({ message: "Logged out successfully" });
 });
 
-// ✅ GET /api/auth/me
+// ========================= GET CURRENT USER =========================
 router.get("/me", protect, async (req, res) => {
   try {
-    res.json(req.user); // returns the logged-in user's info
+    res.json(req.user); // returns user info
   } catch (error) {
+    console.error("Get Me Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
