@@ -43,7 +43,7 @@ export default function ContactPage() {
            
               <input
                 type="text"
-                className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full border-b rounded-md px-4 py-2 focus:ring-1 focus:ring-[#0e8e8e] focus:outline-none"
                 placeholder="Enter your name"
               />
             </div>
@@ -51,7 +51,7 @@ export default function ContactPage() {
              
               <input
                 type="email"
-                className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full border-b rounded-md px-4 py-2 focus:ring-1 focus:ring-[#0e8e8e] focus:outline-none"
                 placeholder="Enter your email"
               />
             </div>
@@ -61,7 +61,7 @@ export default function ContactPage() {
            
             <input
               type="tel"
-              className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full border-b rounded-md px-4 py-2 focus:ring-1 focus:ring-[#0e8e8e] focus:outline-none"
               placeholder="Enter your phone number"
             />
           </div>
@@ -70,7 +70,7 @@ export default function ContactPage() {
           
             <textarea
               rows={5}
-              className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full border-b rounded-md px-4 py-2 focus:ring-1 focus:ring-[#0e8e8e] focus:outline-none"
               placeholder="Type your message..."
             ></textarea>
           </div>
