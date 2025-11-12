@@ -86,15 +86,15 @@ export default function FeaturedProducts() {
                 className="object-cover rounded"
               />
 
-              {/* Add to Cart Overlay */}
+            
          {/* Add to Cart Overlay */}
 <div
   className={`
     absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
-    opacity-0 translate-y-6 
+    opacity-100 translate-y-0
+     transition-all duration-500 ease-out cursor-pointer
     group-hover:opacity-100 group-hover:translate-y-0
-    transition-all duration-500 ease-out cursor-pointer
-    sm:opacity-100 sm:translate-y-0   /* ALWAYS visible on mobile */
+    sm:opacity-0 sm:translate-y-6  
   `}
 >
   <button
