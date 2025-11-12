@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import API from "../../../../lib/api";
-import { useCart } from "../../../../context/CartContext"; // ✅ Make sure this import path matches your setup
+import { useCart } from "../../../../context/CartContext";
+import { useAuth } from "../../../../context/AuthContext";
 
 interface Product {
   _id: string;
@@ -20,8 +21,13 @@ export default function CategoryPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [authLoading, setAuthLoading] = useState(false);
-  const { addToCart } = useCart(); // ✅ from your CartContext
+  const [addingToCart, setAddingToCart] = useState(false); // ✅ renamed for clarity
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const { user, loading: authLoading } = useAuth(); // ✅ from AuthContext
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -39,17 +45,22 @@ export default function CategoryPage() {
 
     fetchProducts();
   }, [categoryName]);
-const handleAddToCart = async (product: Product) => {
-  try {
-    setAuthLoading(true);
-    await addToCart({ ...product, quantity: 1 }); // ✅ add quantity here
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-  } finally {
-    setAuthLoading(false);
-  }
-};
 
+  const handleAddToCart = async (product: Product) => {
+    if (authLoading || addingToCart) return;
+
+    if (!user) {
+      router.push(`/auth/login?redirect=${pathname}`);
+      return;
+    }
+
+    try {
+      setAddingToCart(true);
+      addToCart({ ...product, quantity: 1 }); // ✅ added quantity
+    } finally {
+      setAddingToCart(false);
+    }
+  };
 
   if (loading) return <p className="text-center mt-6">Loading products...</p>;
 
@@ -79,20 +90,29 @@ const handleAddToCart = async (product: Product) => {
 
                 {/* Add to Cart overlay button */}
                 <div
-                   className={`
-    absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
-    opacity-100 translate-y-0
-     transition-all duration-500 ease-out cursor-pointer
-    group-hover:opacity-100 group-hover:translate-y-0
-    sm:opacity-0 sm:translate-y-6  
-  `}
+                  className={`
+                    absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
+                    opacity-100 translate-y-0 transition-all duration-500 ease-out cursor-pointer
+                    group-hover:opacity-100 group-hover:translate-y-0 sm:opacity-0 sm:translate-y-6
+                  `}
                 >
                   <button
-                    className="font-medium text-sm cursor-pointer "
+                    className="font-medium text-sm"
                     onClick={() => handleAddToCart(product)}
-                    disabled={authLoading}
+                    disabled={addingToCart || authLoading}
+                    style={{
+                      opacity: addingToCart || authLoading ? 0.5 : 1,
+                      cursor:
+                        addingToCart || authLoading
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
                   >
-                    {authLoading ? "Adding..." : "Add to Cart"}
+                    {addingToCart
+                      ? "Adding..."
+                      : authLoading
+                      ? "Checking..."
+                      : "Add to Cart"}
                   </button>
                 </div>
               </div>
