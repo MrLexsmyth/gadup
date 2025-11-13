@@ -35,7 +35,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // Call your server-side API (client does NOT see MONGO_URI)
+      
       const user = await loginUser(form);
       localStorage.setItem("user", JSON.stringify(user));
       router.push(redirect);
@@ -60,7 +60,7 @@ export default function LoginPage() {
 
   return (
     <div className={`min-h-screen flex flex-col md:flex-row ${playfair.className}`}>
-      {/* Left image */}
+      
       <div className="hidden md:flex flex-1 relative">
         <Image src="/login.jpg" alt="Log In Image" fill className="object-cover" priority />
       </div>

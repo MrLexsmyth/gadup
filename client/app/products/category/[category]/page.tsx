@@ -21,12 +21,12 @@ export default function CategoryPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [addingToCart, setAddingToCart] = useState(false); // ✅ renamed for clarity
+  const [addingToCart, setAddingToCart] = useState(false); // renamed for clarity
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user, loading: authLoading } = useAuth(); // ✅ from AuthContext
+  const { user, loading: authLoading } = useAuth(); // from AuthContext
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function CategoryPage() {
 
     try {
       setAddingToCart(true);
-      addToCart({ ...product, quantity: 1 }); // ✅ added quantity
+      addToCart({ ...product, quantity: 1 }); //  added quantity
     } finally {
       setAddingToCart(false);
     }

@@ -120,7 +120,7 @@ export default function Navbar() {
           </ul>
 
           {/* Right section */}
-          <div className="flex items-center gap-8 relative">
+          <div className="flex items-center gap-2 relative">
             {/* Cart */}
             <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
               <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-red-600 transition-colors duration-200" />
@@ -160,12 +160,13 @@ export default function Navbar() {
             <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)}></div>
             <div className="fixed top-16 left-0 w-full bg-white shadow-lg rounded-b-xl flex flex-col items-center py-6 gap-4 md:hidden z-50 transition-transform duration-300">
               {categories.map((cat) => (
-                <Link key={cat.name} href={cat.link} className="w-full text-center py-2 text-[#008080] font-medium hover:text-green-600 hover:bg-gray-100 rounded-md" onClick={() => setMenuOpen(false)}>
+                <Link key={cat.name} href={cat.link} className="w-full text-start cursor-pointer px-16 text-[#008080] font-medium " onClick={() => setMenuOpen(false)}>
                   {cat.name}
                 </Link>
               ))}
               <div className="w-full h-[1px] bg-gray-300"></div>
-              {renderUserMenu()}
+              <div className="cursor-pointer">{renderUserMenu()}</div>
+              
             </div>
           </>
         )}

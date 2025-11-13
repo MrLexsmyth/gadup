@@ -1,7 +1,7 @@
 "use client";
 
 import API from "../../lib/api";
-
+import { toast } from "react-hot-toast";
 import { useCart } from "../../context/CartContext";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -46,7 +46,7 @@ export default function CheckoutPage() {
   
   const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  // ✅ Fetch user profile and addresses
+  //  Fetch user profile and addresses
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -73,10 +73,10 @@ export default function CheckoutPage() {
   const deliveryFee = 3000;
 const grandTotal = totalPrice + deliveryFee;
 
-  // ✅ Add new address
+  //  Add new address
   const handleSaveNewAddress = async () => {
     if (!newAddress.label || !newAddress.line1 || !newAddress.city || !newAddress.state || !newAddress.postalCode || !newAddress.country) {
-      alert("Please fill all required fields for new address");
+      toast.error("Please fill all required fields for new address");
       return;
     }
 
@@ -106,10 +106,10 @@ const grandTotal = totalPrice + deliveryFee;
     }
   };
 
-  // ✅ Place order
+  // Place order
   const handlePlaceOrder = async () => {
     if (!selectedAddressId && !showNewAddressForm) {
-      alert("Please select or add an address before checkout");
+      toast.error("Please select or add an address before checkout");
       return;
     }
 
@@ -121,7 +121,7 @@ const grandTotal = totalPrice + deliveryFee;
     }
 
     if (!addressToUse) {
-      alert("Address not found");
+      toast.error("Address not found");
       return;
     }
 
@@ -135,7 +135,7 @@ const grandTotal = totalPrice + deliveryFee;
         userEmail: email,
       });
 
-      alert("Order placed successfully!");
+       toast.success("Order placed successfully!");
       clearCart();
     } catch (err) {
       console.error("Order placement failed:", err);

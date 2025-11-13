@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -29,12 +29,12 @@ export default function AddressesPage() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
-  // ✅ Fetch user addresses on mount
+  
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const { data } = await axios.get("http://localhost:5000/api/user/profile", {
-          withCredentials: true, // include cookies
+          withCredentials: true, 
         });
         setAddresses(data.addresses || []);
       } catch (err) {
@@ -52,7 +52,7 @@ export default function AddressesPage() {
 
   const handleSubmit = async () => {
     if (!form.label || !form.line1 || !form.city || !form.state || !form.postalCode || !form.country) {
-      alert("Please fill all required fields");
+      toast.success("Please fill all required fields");
       return;
     }
 
@@ -81,7 +81,7 @@ export default function AddressesPage() {
       setEditingId(null);
     } catch (err) {
       console.error("Failed to save address:", err);
-      alert("Failed to save address");
+      toast.success("Failed to save address");
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ export default function AddressesPage() {
       setAddresses(data.addresses);
     } catch (err) {
       console.error("Failed to delete address:", err);
-      alert("Failed to delete address");
+      toast.success("Failed to delete address");
     } finally {
       setLoading(false);
     }

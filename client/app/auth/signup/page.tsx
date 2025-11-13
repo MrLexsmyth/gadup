@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "react-hot-toast";
 import { Playfair_Display } from "next/font/google";
 import Image from "next/image";
 import { useState } from "react";
@@ -61,7 +61,7 @@ export default function SignupPage() {
 
     try {
       await signupUser(form);
-      alert("✅ Signup successful!");
+      toast.success(" Signup successful!");
       router.push("/auth/login");
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;
@@ -114,7 +114,7 @@ export default function SignupPage() {
             className="w-full p-3 border-b border-gray-400 mb-4 focus:outline-none focus:border-[#00817c]"
           />
 
-          {/* Password input */}
+          
           <div className="relative w-full mb-2">
             <input
               type={showPassword ? "text" : "password"}
@@ -134,7 +134,7 @@ export default function SignupPage() {
             </button>
           </div>
 
-          {/* Live password feedback */}
+         
           <div className="text-sm text-gray-600 mb-4">
             {passwordErrors.map((err, idx) => (
               <p key={idx} className={err.test ? "text-green-600" : "text-gray-600"}>

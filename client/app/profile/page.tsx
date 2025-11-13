@@ -56,7 +56,7 @@ export default function UserProfilePage() {
         const { data } = await API.get("/user/profile");
         setUser(data);
       } catch (err) {
-        console.error("❌ Failed to fetch profile:", err);
+        console.error(" Failed to fetch profile:", err);
       } finally {
         setLoading(false);
       }
