@@ -64,7 +64,7 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
 
-    // ⭐️ Rating-related fields
+    // Rating-related fields
     reviews: [reviewSchema], // embedded array of reviews
     rating: {
       type: Number,

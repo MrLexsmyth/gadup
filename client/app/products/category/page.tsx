@@ -87,10 +87,11 @@ export default function CategoryPage() {
     addToCart({ ...product, quantity: 1 });
   };
 
-  if (loading) return <div className="flex flex-col items-center justify-center py-16">
-                            <Image src="/down.png" alt="Loading" width={80} height={80} className="animate-pulse" />
+  if (loading) return 
+                        <div className="flex flex-col items-center justify-center py-16">
+                            <Image src="/gadup2.png" alt="Loading" width={300} height={300} className="animate-pulse" />
                             <p className="mt-3 text-gray-600 font-medium">Loading GadUp collections...</p>
-                       </div>
+                        </div>
 ;
 
   return (

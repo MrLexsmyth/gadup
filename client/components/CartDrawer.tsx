@@ -151,7 +151,7 @@ export default function CartDrawer({
           <div className="p-4 border-t space-y-3">
             <div className="flex justify-between items-center font-semibold text-lg">
               <span>Total:</span>
-              <span>₦{total.toLocaleString()}.00</span>
+              <span>₦{total.toLocaleString()}</span>
             </div>
                <div className="flex flex-col gap-3">
             <Link href="/checkout" passHref>
