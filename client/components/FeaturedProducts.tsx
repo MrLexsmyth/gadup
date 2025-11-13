@@ -78,24 +78,20 @@ export default function FeaturedProducts() {
             key={product._id}
             className="flex-shrink-0 w-[350px] h-[350px] rounded-lg p-4 shadow-sm hover:shadow-md transition"
           >
-            <div className="relative w-full h-[220px] bg-[#f5f5f5] rounded overflow-hidden group">
+            <div className="relative w-full h-[200px] bg-[#f5f5f5] rounded overflow-hidden group">
               <Image
                 src={product.image?.url || "/placeholder.jpg"}
                 alt={product.name}
                 fill
                 className="object-cover rounded"
               />
-
-            
-         {/* Add to Cart Overlay */}
-<div
-  className={`
-    absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
-    opacity-100 translate-y-0
-     transition-all duration-500 ease-out cursor-pointer
-    group-hover:opacity-100 group-hover:translate-y-0
-    sm:opacity-0 sm:translate-y-6  
-  `}
+                  <div
+                   className={`
+                   absolute bottom-0 left-0 w-full bg-[#00817c]/90 text-white text-center py-3
+                   opacity-100 translate-y-0
+                   transition-all duration-500 ease-out cursor-pointer
+                   group-hover:opacity-100 group-hover:translate-y-0
+                   sm:opacity-0 sm:translate-y-6`}
 >
   <button
     className="font-medium text-sm"

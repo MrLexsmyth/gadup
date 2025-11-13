@@ -48,7 +48,7 @@ export default function UserProfilePage() {
   const [activeTab, setActiveTab] = useState<"profile" | "address" | "orders">(
     "profile"
   );
-  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -69,8 +69,10 @@ export default function UserProfilePage() {
   if (!user) return <p className="p-6 text-red-500">Failed to load profile.</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6"
-    style={{ fontFamily: "Playfair Display, serif" }}>
+    <div
+      className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6"
+      style={{ fontFamily: "Playfair Display, serif" }}
+    >
       {/* ---------- Left Sidebar ---------- */}
       <aside className="md:col-span-1 border rounded-lg p-4 shadow-sm bg-white">
         <h2 className="text-lg font-semibold mb-4 text-gray-800">Account</h2>
@@ -128,7 +130,7 @@ export default function UserProfilePage() {
               <h1 className="text-2xl font-bold mb-4">My Profile</h1>
               <div className="space-y-2">
                 <p>
-                  <strong>UserName:</strong> {user.name}
+                  <strong>Username:</strong> {user.name}
                 </p>
                 <p>
                   <strong>Email:</strong> {user.email}
@@ -167,17 +169,14 @@ export default function UserProfilePage() {
                         {addr.postalCode}, {addr.country}
                       </p>
                     </div>
-                    
-                  ))
-                  }
+                  ))}
                 </div>
-                
               )}
               <Link href="/profile/addresses">
-  <button className="bg-[#008080] text-white font-semibold mt-4 py-2 px-4 cursor-pointer rounded hover:bg-gray-700 transition-colors duration-300">
-    Add / Delete Address
-  </button>
-</Link>
+                <button className="bg-[#008080] text-white font-semibold mt-4 py-2 px-4 cursor-pointer rounded hover:bg-gray-700 transition-colors duration-300">
+                  Add / Delete Address
+                </button>
+              </Link>
             </motion.div>
           )}
 
@@ -195,21 +194,16 @@ export default function UserProfilePage() {
                   {user.orders.map((order) => (
                     <div
                       key={order._id}
-                      className="border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition"
+                      className="border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
+                      onClick={() => setSelectedOrder(order)}
                     >
-                      <div
-                        className="flex justify-between items-center cursor-pointer"
-                        onClick={() =>
-                          setExpandedOrder(
-                            expandedOrder === order._id ? null : order._id
-                          )
-                        }
-                      >
+                      <div className="flex justify-between items-center">
                         <p>
                           <strong>Order ID:</strong> {order._id}
                         </p>
                         <p>
-                          <strong>Total:</strong> ₦{order.total.toLocaleString()}
+                          <strong>Total:</strong> ₦
+                          {order.total.toLocaleString()}
                         </p>
                         <p>
                           <strong>Status:</strong>{" "}
@@ -226,61 +220,6 @@ export default function UserProfilePage() {
                           </span>
                         </p>
                       </div>
-
-                      {/* Expanded order details */}
-                      {expandedOrder === order._id && (
-                        <div className="mt-4 space-y-3">
-                          <p>
-                            <strong>Date:</strong>{" "}
-                            {new Date(order.createdAt).toLocaleString()}
-                          </p>
-
-                          <div>
-                            <strong>Shipping Address:</strong>
-                            <p>
-                              {order.address.label && `${order.address.label}: `}
-                              {order.address.line1}
-                              {order.address.line2 && `, ${order.address.line2}`},{" "}
-                              {order.address.city}, {order.address.state}{" "}
-                              {order.address.postalCode}, {order.address.country}
-                            </p>
-                          </div>
-
-                          <div>
-                            <strong>Items:</strong>
-                            <div className="space-y-2 mt-2">
-                              {order.items.map((item, i) => (
-                                <div
-                                  key={i}
-                                  className="flex items-center gap-4 border p-2 rounded"
-                                >
-                                  {item.image?.url && (
-                                    <div className="w-16 h-16 relative flex-shrink-0">
-                                      <Image
-                                        src={item.image.url}
-                                        alt={item.name}
-                                        fill
-                                        className="object-cover rounded"
-                                      />
-                                    </div>
-                                  )}
-                                  <div>
-                                    <p className="font-medium">{item.name}</p>
-                                    <p>
-                                      Qty: {item.quantity} × ₦
-                                      {item.price.toLocaleString()}
-                                    </p>
-                                    <p>
-                                      Subtotal: ₦
-                                      {(item.quantity * item.price).toLocaleString()}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -291,6 +230,103 @@ export default function UserProfilePage() {
           )}
         </AnimatePresence>
       </section>
+
+      {/* ---------- Modal for Order Details ---------- */}
+      <AnimatePresence>
+        {selectedOrder && (
+          <motion.div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full relative overflow-y-auto max-h-[90vh]"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="absolute top-3 right-4 text-gray-600 hover:text-red-500 text-lg font-bold"
+              >
+                ✕
+              </button>
+              <h2 className="text-2xl font-bold mb-4">
+                Order Details - #{selectedOrder._id}
+              </h2>
+              <p>
+                <strong>Date:</strong>{" "}
+                {new Date(selectedOrder.createdAt).toLocaleString()}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`${
+                    selectedOrder.status === "delivered"
+                      ? "text-green-600"
+                      : selectedOrder.status === "pending"
+                      ? "text-yellow-600"
+                      : "text-gray-600"
+                  } font-medium`}
+                >
+                  {selectedOrder.status}
+                </span>
+              </p>
+              <p className="mt-2">
+                <strong>Total:</strong> ₦
+                {selectedOrder.total.toLocaleString()}
+              </p>
+
+              <div className="mt-4">
+                <strong>Shipping Address:</strong>
+                <p className="text-sm text-gray-700">
+                  {selectedOrder.address.label && `${selectedOrder.address.label}: `}
+                  {selectedOrder.address.line1}
+                  {selectedOrder.address.line2 && `, ${selectedOrder.address.line2}`},{" "}
+                  {selectedOrder.address.city}, {selectedOrder.address.state}{" "}
+                  {selectedOrder.address.postalCode}, {selectedOrder.address.country}
+                </p>
+              </div>
+
+              <div className="mt-6">
+                <strong>Items:</strong>
+                <div className="space-y-2 mt-2">
+                  {selectedOrder.items.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-4 border p-2 rounded"
+                    >
+                      {item.image?.url && (
+                        <div className="w-16 h-16 relative flex-shrink-0">
+                          <Image
+                            src={item.image.url}
+                            alt={item.name}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-medium">{item.name}</p>
+                        <p>
+                          Qty: {item.quantity} × ₦
+                          {item.price.toLocaleString()}
+                        </p>
+                        <p>
+                          Subtotal: ₦
+                          {(item.quantity * item.price).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
