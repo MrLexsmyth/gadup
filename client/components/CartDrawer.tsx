@@ -153,7 +153,7 @@ export default function CartDrawer({
               <span>Total:</span>
               <span>₦{total.toLocaleString()}.00</span>
             </div>
-
+               <div className="flex flex-col gap-3">
             <Link href="/checkout" passHref>
               <button className="w-full bg-[#008080] cursor-pointer text-white py-2 rounded transition-colors hover:bg-teal-700">
                 Proceed to Checkout
@@ -166,6 +166,7 @@ export default function CartDrawer({
             >
               Clear Cart
             </button>
+            </div>
           </div>
         )}
       </motion.div>
