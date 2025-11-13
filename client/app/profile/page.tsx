@@ -286,7 +286,7 @@ export default function UserProfilePage() {
                   {selectedOrder.address.line1}
                   {selectedOrder.address.line2 && `, ${selectedOrder.address.line2}`},{" "}
                   {selectedOrder.address.city}, {selectedOrder.address.state}{" "}
-                  {selectedOrder.address.postalCode}, {selectedOrder.address.country}
+                  {selectedOrder.address.postalCode}, {selectedOrder.address.country}.
                 </p>
               </div>
 
