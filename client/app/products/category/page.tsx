@@ -97,17 +97,19 @@ export default function CategoryPage() {
         {/* Category Filter */}
         <div className="flex flex-wrap gap-2 mb-6">
           {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full border text-sm capitalize transition ${
-                selectedCategory === cat
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              {cat}
-            </button>
+           <button
+  key={cat}
+  onClick={() => setSelectedCategory(cat)}
+  className={`px-5 py-2.5 cursor-pointer rounded-full text-sm font-medium capitalize transition-all duration-300 ease-in-out 
+    border ${
+      selectedCategory === cat
+        ? "bg-[#008080] text-white shadow-md scale-105 border-transparent"
+        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-[#008080]/50 hover:text-[#008080]"
+    }`}
+>
+  {cat}
+</button>
+
           ))}
         </div>
 
@@ -118,7 +120,7 @@ export default function CategoryPage() {
             {filteredProducts.map((product) => (
               <div
                 key={product._id}
-                className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+                className="  overflow-hidden shadow-sm hover:shadow-md transition"
               >
                 <div className="relative w-full h-56 bg-gray-100 group">
                   <Image
