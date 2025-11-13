@@ -72,14 +72,14 @@ export default function About() {
           <div className="max-w-md">
             <h1 className="text-2xl md:text-4xl font-bold mb-4">Our Story</h1>
              <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              Launched in 2023, Goodnesss is your ultimate online destination for
+              Launched in 2023, <span className="text-[#008080] italic font-serif">GadUp</span> is your ultimate online destination for
               the latest and greatest in electronics and accessories. We are
               passionate about bringing you cutting-edge technology, from sleek
               smartphones and powerful laptops to innovative gadgets and must-have
               accessories.
               <br />
               <br />
-              At Goodnesss, we believe in quality, affordability, and exceptional
+              At <span className="text-[#008080] italic font-serif">GadUp</span>, we believe in quality, affordability, and exceptional
               customer service. Our curated selection of products is designed to
               meet the needs of tech enthusiasts and everyday users alike. Whether
               you&apos;re looking to upgrade your devices or find the perfect gift, we&apos;ve
@@ -104,7 +104,7 @@ export default function About() {
         {boxes.map((box, index) => (
           <div
             key={index}
-            className="bg-white shadow-md p-4 text-center hover:bg-red-500 transition cursor-pointer"
+            className="bg-white shadow-md p-4 text-center hover:bg-[#008080] transition cursor-pointer"
           >
             <div className="w-15 h-15 mx-auto mb-3 relative">
               <Image
