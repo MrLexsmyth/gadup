@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import Navbar from "../components/Navbar"; 
+
 
 export default function NotFound() {
   return (
+     <>
+      <Navbar />
     <div className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 px-6">
         <Image
         src="/404.jpg"
@@ -29,5 +33,6 @@ export default function NotFound() {
         </button>
       </Link>
     </div>
+     </>
   );
 }

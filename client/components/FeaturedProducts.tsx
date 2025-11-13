@@ -78,7 +78,7 @@ export default function FeaturedProducts() {
             key={product._id}
             className="flex-shrink-0 w-[350px] h-[350px] rounded-lg p-4 shadow-sm hover:shadow-md transition"
           >
-            <div className="relative w-full h-[200px] bg-[#f5f5f5] rounded overflow-hidden group">
+            <div className="relative w-full h-[240px] bg-[#f5f5f5] rounded overflow-hidden group">
               <Image
                 src={product.image?.url || "/placeholder.jpg"}
                 alt={product.name}

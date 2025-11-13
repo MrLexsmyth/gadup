@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
-import { SessionProvider } from "next-auth/react";
+
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -62,11 +62,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="top-center" />
-        <SessionProvider>
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>
-        </SessionProvider>
       </body>
     </html>
   );
