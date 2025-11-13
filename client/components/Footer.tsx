@@ -2,6 +2,7 @@
 import React from "react";
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
+import ScrollToTopButton from "./ScrollToTopButton";
 
 const Footer = () => {
   return (
@@ -66,6 +67,7 @@ const Footer = () => {
       <div className="border-t border-gray-700 mt-10 pt-4 text-center text-sm text-gray-400">
         © {new Date().getFullYear()} <span className="text-[#008080] font-semibold">GadUp</span>. All rights reserved.
       </div>
+      <ScrollToTopButton />
     </footer>
   );
 };
