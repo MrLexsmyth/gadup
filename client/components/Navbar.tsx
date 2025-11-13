@@ -120,12 +120,12 @@ export default function Navbar() {
           </ul>
 
           {/* Right section */}
-          <div className="flex items-center gap-4 relative">
+          <div className="flex items-center gap-8 relative">
             {/* Cart */}
             <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
               <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-red-600 transition-colors duration-200" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-teal-700 text-white font-bold w-5 h-5 rounded-full flex items-center justify-center text-xs">
+                <span className="absolute -top-2 -right-2 bg-teal-700 text-white font-bold w-4 h-4 rounded-full flex items-center justify-center text-xs">
                   {cartCount}
                 </span>
               )}
@@ -136,9 +136,9 @@ export default function Navbar() {
             <div className="relative">
               <div
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="w-8 h-8 rounded-full bg-[#008080] text-white flex items-center justify-center font-semibold cursor-pointer"
+                className="w-10 h-10 rounded-full bg-[#008080] text-white flex items-center justify-center font-semibold cursor-pointer"
               >
-                {user?.name.charAt(0).toUpperCase() || <User className="w-5 h-5" />}
+                {user?.name.charAt(0).toUpperCase() || <User className="w-8 h-8" />}
               </div>
               {userMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 w-40 bg-white shadow-lg rounded-lg flex flex-col py-1 z-50">

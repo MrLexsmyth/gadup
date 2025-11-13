@@ -1,6 +1,7 @@
 
 import Navbar from "../../components/Navbar";
 import FooterFlex from "../../components/FooterFlex";
+import Footer from "../../components/Footer";
 
 export default function About({ children }: { children: React.ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function About({ children }: { children: React.ReactNode }) {
     {children}
   </main>
   <FooterFlex />
+  <Footer />
 </>
     
   );
