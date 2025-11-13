@@ -113,8 +113,19 @@ export default function UserProfilePage() {
               My Orders
             </button>
           </li>
+          
+             <Link href="/profile/password">
+                <button className="w-full text-left p-2 rounded-md  text-black transition cursor-pointer hover:bg-gray-100 text-gray-800">
+                  Change Password
+                </button>
+              </Link>
+        
         </ul>
+        
+       
+      
       </aside>
+      
 
       {/* ---------- Right Content Area ---------- */}
       <section className="md:col-span-3 bg-white border border-[#008080] rounded-lg shadow-sm p-6 min-h-[400px]">
@@ -177,6 +188,7 @@ export default function UserProfilePage() {
                   Add / Delete Address
                 </button>
               </Link>
+              
             </motion.div>
           )}
 
