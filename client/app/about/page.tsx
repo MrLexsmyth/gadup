@@ -45,14 +45,20 @@ const team = [
   },
   {
     title: "Olawale Olatunji",
-    description: "Co-Founder & MD",
-     image: "/client3.webp",
+    description: "Co-Founder & COO",
+     image: "/coo.jpg",
     alt: "Products Sold",
   },
   {
-    title: "Adetunji Omowumi",
-    description: "Product Manager",
-    image: "/omowumi.jpg",
+    title: "Aderoju Olaide ",
+    description: "Product Manager/Designer",
+    image: "/pmm.jpg",
+    alt: "Customer Active",
+  },
+    {
+    title: "Adedoyinsola Olabisi",
+    description: "Operations Manager",
+    image: "/pm.jpg",
     alt: "Customer Active",
   },
   
@@ -115,7 +121,7 @@ export default function About() {
       </div>
     </div>
        <div className="w-full px-8 md:px-16">
-      <div className="grid grid-cols-1 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-4">
         {team.map((team, index) => (
           <div
             key={index}
