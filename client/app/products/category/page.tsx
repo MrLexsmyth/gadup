@@ -87,7 +87,11 @@ export default function CategoryPage() {
     addToCart({ ...product, quantity: 1 });
   };
 
-  if (loading) return <p className="p-6 text-center">Loading products...</p>;
+  if (loading) return <div className="flex flex-col items-center justify-center py-16">
+                            <Image src="/down.png" alt="Loading" width={80} height={80} className="animate-pulse" />
+                            <p className="mt-3 text-gray-600 font-medium">Loading GadUp collections...</p>
+                       </div>
+;
 
   return (
     <div className={playfair.className}>
