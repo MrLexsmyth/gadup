@@ -1,9 +1,10 @@
-import NextAuth, { AuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
+
 import clientPromise from "@/lib/mongodb";
 
-export const authOptions: AuthOptions = {
+const handler = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
@@ -12,17 +13,15 @@ export const authOptions: AuthOptions = {
     }),
   ],
   session: { strategy: "jwt" },
-  pages: { signIn: "/auth/login" },
+  pages: {
+    signIn: "/auth/login",
+  },
   callbacks: {
     async session({ session, token }) {
-      if (session.user && token.sub) session.user.id = token.sub;
+      session.user.id = token.sub ?? ""; // ✅ fixed type issue
       return session;
     },
-    async redirect({ baseUrl }) {
-      return baseUrl + "/";
-    },
   },
-};
+});
 
-const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
