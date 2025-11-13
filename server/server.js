@@ -17,7 +17,7 @@ import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 dotenv.config();
 const app = express();
 
-// ✅ Allowed origins
+
 const allowedOrigins = [
   "http://localhost:3000",
   "https://gadup.vercel.app"
@@ -33,20 +33,18 @@ app.use(cors({
 }));
 
 
-// ✅ Middleware
+
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// ✅ Routes
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log(" MongoDB Connected"))
+  .catch((err) => console.error(" MongoDB Connection Error:", err));
+
+
+
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
@@ -55,7 +53,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 
-// ✅ Test route
+
 app.get("/api/test", (req, res) => {
   res.status(200).json({
     success: true,
@@ -65,11 +63,11 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-// ✅ Root route
+
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });
 
-// ✅ Start server
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
