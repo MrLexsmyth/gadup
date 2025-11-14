@@ -1,10 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import API from "../../../../lib/api"; // centralized axios instance
+import API from "../../../..//lib/api";
+import Image from "next/image";
+import { toast } from "react-hot-toast";
+import { AxiosError } from "axios";
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+}
 
 interface Address {
-  label?: string;
+  label: string;
   line1: string;
   line2?: string;
   city: string;
@@ -13,80 +22,128 @@ interface Address {
   country: string;
 }
 
+interface OrderItem {
+  _id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: { url: string };
+}
+
 interface Order {
   _id: string;
-  user: { name: string; email: string };
-  items: { name: string; price: number; quantity: number }[];
+  user: User;
+  items: OrderItem[];
   total: number;
+  paymentMethod: string;
   status: string;
-  createdAt: string;
   address: Address;
+  userName: string;
+  userEmail: string;
+  reference: string;
+  createdAt: string;
 }
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const { data } = await API.get<Order[]>("/admin/orders");
+      setOrders(data);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(error.response?.data || error.message);
+        toast.error(error.response?.data?.message || "Failed to fetch orders");
+      } else if (error instanceof Error) {
+        console.error(error.message);
+        toast.error(error.message);
+      } else {
+        console.error(error);
+        toast.error("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateStatus = async (orderId: string, status: string) => {
+    try {
+      const { data } = await API.put(`/admin/orders/${orderId}/status`, { status });
+      toast.success(data.message);
+      setOrders((prev) =>
+        prev.map((order) => (order._id === orderId ? { ...order, status } : order))
+      );
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.error(error.response?.data || error.message);
+        toast.error(error.response?.data?.message || "Failed to update status");
+      } else if (error instanceof Error) {
+        console.error(error.message);
+        toast.error(error.message);
+      } else {
+        console.error(error);
+        toast.error("An unknown error occurred");
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const { data } = await API.get<Order[]>("/admin/orders");
-        setOrders(data);
-      } catch (err) {
-        console.error("Failed to fetch orders:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
 
-  if (loading) return <p className="p-6">Loading orders...</p>;
+  if (loading) return <p className="text-center mt-10">Loading orders...</p>;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">All Orders</h1>
-
+    <div className="max-w-7xl mx-auto p-4">
+      <h1 className="text-3xl font-semibold mb-6">All Orders</h1>
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           {orders.map((order) => (
             <div key={order._id} className="border p-4 rounded shadow-sm">
-              <p>
-                <strong>User:</strong> {order.user.name} ({order.user.email})
-              </p>
-              <p>
-                <strong>Total:</strong> ₦{order.total.toLocaleString()}
-              </p>
-              <p>
-                <strong>Status:</strong> {order.status}
-              </p>
-              <p>
-                <strong>Created At:</strong>{" "}
-                {new Date(order.createdAt).toLocaleString()}
-              </p>
+              <div className="flex justify-between items-center mb-2">
+                <div>
+                  <p className="font-semibold">{order.userName} ({order.user?.email || "No email"})</p>
 
-              <div className="mt-2">
-                <strong>Shipping Address:</strong>
-                <p>
-                  {order.address.label && `${order.address.label}: `}
-                  {order.address.line1}
-                  {order.address.line2 && `, ${order.address.line2}`},{" "}
-                  {order.address.city}, {order.address.state}{" "}
-                  {order.address.postalCode}, {order.address.country}
-                </p>
+                  <p className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">Payment: {order.paymentMethod}</p>
+                </div>
+                <div>
+                  <select
+                    value={order.status}
+                    onChange={(e) => updateStatus(order._id, e.target.value)}
+                    className="border p-1 rounded"
+                  >
+                    <option value="paid">Paid</option>
+                    <option value="pending">Pending</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
               </div>
-
-              <div className="mt-2">
-                <strong>Items:</strong>
-                <ul className="list-disc ml-6">
-                  {order.items.map((item, i) => (
-                    <li key={i}>
-                      {item.name} × {item.quantity} — ₦{item.price.toLocaleString()}
-                    </li>
-                  ))}
-                </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {order.items.map((item) => (
+                  <div key={item._id} className="flex items-center gap-2">
+                    {item.image?.url && (
+                      <div className="relative w-full h-18 sm:h-34 md:h-50 lg:h-64">
+                             <Image src={item.image.url} alt={item.name} fill className="object-cover object-center" />
+                           </div>
+                    )}
+                    <div>
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm">₦{item.price.toLocaleString()} × {item.quantity}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 font-semibold">Total: ₦{order.total.toLocaleString()}</p>
+              <div className="mt-2 text-sm text-gray-600">
+                <p>Shipping to: {order.address.line1}, {order.address.city}, {order.address.state}</p>
               </div>
             </div>
           ))}

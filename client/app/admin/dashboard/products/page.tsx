@@ -45,7 +45,8 @@ export default function ProductsPage() {
   if (loading) return <p className="p-6">Loading...</p>;
 
   return (
-    <div className="p-8">
+    <div className="p-8"
+    style={{ fontFamily: "Playfair Display, serif" }}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Products</h1>
         <Link

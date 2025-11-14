@@ -8,7 +8,7 @@ import { useCart } from "../context/CartContext";
 import CartDrawer from "./CartDrawer";
 import { ShoppingCart, User, Menu, X, LogIn, UserPlus, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import API from "../lib/api"; // use your Axios instance
+import API from "../lib/api"; 
 
 const categories = [
   { name: "Home", link: "/" },
@@ -123,7 +123,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 relative">
             {/* Cart */}
             <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
-              <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-red-600 transition-colors duration-200" />
+              <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-[#008080] transition-colors duration-200" />
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-teal-700 text-white font-bold w-4 h-4 rounded-full flex items-center justify-center text-xs">
                   {cartCount}
@@ -136,7 +136,7 @@ export default function Navbar() {
             <div className="relative">
               <div
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="w-10 h-10 rounded-full bg-[#008080] text-white flex items-center justify-center font-semibold cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#008080] text-white flex items-center justify-center font-semibold cursor-pointer"
               >
                 {user?.name.charAt(0).toUpperCase() || <User className="w-8 h-8" />}
               </div>
@@ -154,7 +154,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+         {/* Mobile Menu  */}
         {menuOpen && (
           <>
             <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)}></div>

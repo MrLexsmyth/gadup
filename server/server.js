@@ -4,20 +4,22 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-
 // Routes
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import orderRoutes from "./routes/order.js";
 import adminOrderRoutes from "./routes/adminOrderRoutes.js";
+import verifyPaymentRoutes from "./routes/verifyPayment.js";
+
+
+
 
 dotenv.config();
 const app = express();
 
-
+// CORS setup
 const allowedOrigins = [
   "http://localhost:3000",
   "https://gadup.vercel.app"
@@ -25,35 +27,34 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // allow curl, mobile apps
+    if (!origin) return callback(null, true); // allow curl, mobile apps, etc.
     if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error("Not allowed by CORS"));
   },
-  credentials: true, // allow cookies
+  credentials: true,
 }));
 
-
-
+// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log(" MongoDB Connected"))
-  .catch((err) => console.error(" MongoDB Connection Error:", err));
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.error("MongoDB Connection Error:", err));
 
-
-
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/order", orderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 
+app.use("/api/payment/verify", verifyPaymentRoutes);
 
+// Test route
 app.get("/api/test", (req, res) => {
   res.status(200).json({
     success: true,
@@ -63,11 +64,11 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-
+// Root route
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });
 
-
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

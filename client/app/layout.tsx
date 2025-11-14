@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "../context/AuthContext";
 import { CartProvider } from "../context/CartContext";
-
+import Script from 'next/script';
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -61,6 +61,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+          <Script src="https://js.paystack.co/v1/inline.js" strategy="afterInteractive" />
         <Toaster position="bottom-right" />
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
