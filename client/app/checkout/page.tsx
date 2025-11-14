@@ -1,8 +1,8 @@
 "use client";
-
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { Playfair_Display } from "next/font/google";
 import { useCart } from "../../context/CartContext";
@@ -64,6 +64,8 @@ export default function CheckoutPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
 
   const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const deliveryFee = 3000;
@@ -169,11 +171,12 @@ export default function CheckoutPage() {
     userEmail: email,
     reference: response.reference,
   },
-  { withCredentials: true } // ✅ This is required for cookie-based auth
+  { withCredentials: true } 
 );
 
             toast.success(res.data.message || "Payment successful!");
             clearCart();
+            setShowPopup(true);
           } catch (err) {
             console.error(err);
             toast.error("Payment verification failed");
@@ -329,15 +332,48 @@ export default function CheckoutPage() {
 
               <button
                 onClick={handlePaystackPayment}
-                className="mt-6 w-full bg-red-600 text-white py-3 rounded hover:bg-red-700 transition-colors"
+                className="mt-6 w-full bg-[#008080] text-white py-3 rounded transition-colors"
                 disabled={loading}
               >
                 {loading ? "Processing payment..." : "Pay with Paystack"}
               </button>
+              
             </div>
+            
           )}
         </div>
       </div>
+      {showPopup && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-xl shadow-xl w-[90%] max-w-md text-center">
+       <button
+        onClick={() => setShowPopup(false)}
+        className=" text-[#008080] cursor-pointer flex justify-left"
+      >
+        <X />
+      </button>
+      <div className="flex justify-center">
+    <Image src="/thank.webp" alt="Logo" width={160} height={160} className="object-contain"  loading="eager"/>
+      </div>
+       
+      <h2 className="text-2xl font-bold text-[#008080] mb-3">Payment Successful!</h2>
+      <p className="text-gray-700 mb-5">
+        Thank you for your purchase, Your payment was successfully confirmed! 
+      </p>
+      <p className="text-gray-700 mb-5">Thank you for shopping with us.</p>
+      
+     <Link href="/profile/">
+  <button
+    className="bg-[#008080] cursor-pointer text-white px-5 py-2 rounded-lg hover:bg-[#006b6b] transition"
+  >
+    View Details
+  </button>
+</Link>
+      
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

@@ -15,7 +15,7 @@ const seedAdmin = async () => {
     const admin = await User.create({
       name: "Admin User",
       email: "admin@example.com",
-      password: "Ilovejesus12345678@", // will be hashed automatically by your pre-save middleware
+      password: "Ilovejesus12345678@", 
       isAdmin: true,
     });
 
