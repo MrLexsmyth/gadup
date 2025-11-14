@@ -15,8 +15,8 @@ const categories: Category[] = [
   { name: "Phones", image: "/categories/phones.png" },
   { name: "Toys", image: "/categories/toys.png" },
   { name: "Laptops", image: "/categories/laptops.jpg" },
-  { name: "Gaming Accessories", image: "/categories/gaming.png" },
-  { name: "General Accessories", image: "/categories/accessories.png" },
+  { name: "Gaming", image: "/categories/gaming.png" },
+  { name: "Accessories", image: "/categories/accessories.png" },
 ];
 
 // Container animation
