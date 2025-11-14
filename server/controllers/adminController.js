@@ -9,13 +9,13 @@ const generateToken = (res, userId) => {
     expiresIn: "1d",
   });
 
- res.cookie("jwt", token, {
+res.cookie("jwt", token, {
   httpOnly: true,
-  secure: true,        // must be TRUE for sameSite: none
-  sameSite: "none",    // Safari & Chrome on iPhone require this
-  path: "/",           // important
+  secure: process.env.NODE_ENV === "production", // true in production
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 24 * 60 * 60 * 1000,
 });
+
 
 };
 
