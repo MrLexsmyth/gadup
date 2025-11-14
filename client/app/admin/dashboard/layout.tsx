@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import AdminSidebar from "../../../components/AdminSidebar";
 import { useRouter } from "next/navigation";
-import API from "../../../lib/api"; // centralized axios instance
+import API from "../../../lib/api"; 
+import { Playfair_Display } from "next/font/google"; 
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
+
+
 
 export default function DashboardLayout({
   children,
@@ -59,10 +67,8 @@ export default function DashboardLayout({
   const showSidebar = sidebarOpen || windowWidth > 768;
 
   return (
-    <div
-      className="flex min-h-screen bg-gray-100"
-      style={{ fontFamily: "Playfair Display, serif" }}
-    >
+   <div className={`flex min-h-screen bg-gray-100 ${playfair.className}`}>
+
       <AnimatePresence>
         {showSidebar && (
           <motion.aside

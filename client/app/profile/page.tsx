@@ -193,52 +193,58 @@ export default function UserProfilePage() {
           )}
 
           {activeTab === "orders" && (
-            <motion.div
-              key="orders"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
-            >
-              <h1 className="text-2xl font-bold mb-4">Order History</h1>
-              {user.orders && user.orders.length > 0 ? (
-                <div className="space-y-4">
-                  {user.orders.map((order) => (
-                    <div
-                      key={order._id}
-                      className="border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
-                      onClick={() => setSelectedOrder(order)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <p>
-                          <strong>Order ID:</strong> {order._id}
-                        </p>
-                        <p>
-                          <strong>Total:</strong> ₦
-                          {order.total.toLocaleString()}
-                        </p>
-                        <p>
-                          <strong>Status:</strong>{" "}
-                          <span
-                            className={`${
-                              order.status === "delivered"
-                                ? "text-green-600"
-                                : order.status === "pending"
-                                ? "text-yellow-600"
-                                : "text-gray-600"
-                            } font-medium`}
-                          >
-                            {order.status}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600">You haven’t made any orders yet.</p>
-              )}
-            </motion.div>
+           <motion.div
+  key="orders"
+  initial={{ opacity: 0, y: 15 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -15 }}
+  transition={{ duration: 0.3 }}
+>
+  <h1 className="text-2xl font-bold mb-4">Order History</h1>
+
+  {user.orders && user.orders.length > 0 ? (
+    <div className="space-y-4">
+      {user.orders.map((order) => (
+        <div
+          key={order._id}
+          className="border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition cursor-pointer"
+          onClick={() => setSelectedOrder(order)}
+        >
+          {/* Responsive wrapper */}
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+            
+            <p className="text-sm md:text-base">
+              <strong>Order ID:</strong> {order._id}
+            </p>
+
+            <p className="text-sm md:text-base">
+              <strong>Total:</strong> ₦{order.total.toLocaleString()}
+            </p>
+
+            <p className="text-sm md:text-base">
+              <strong>Status:</strong>{" "}
+              <span
+                className={`${
+                  order.status === "delivered"
+                    ? "text-green-600"
+                    : order.status === "pending"
+                    ? "text-yellow-600"
+                    : "text-gray-600"
+                } font-medium`}
+              >
+                {order.status}
+              </span>
+            </p>
+
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-600">You haven’t made any orders yet.</p>
+  )}
+</motion.div>
+
           )}
         </AnimatePresence>
       </section>

@@ -6,6 +6,9 @@ import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { AxiosError } from "axios";
 
+
+
+
 interface User {
   _id: string;
   name: string;
@@ -130,7 +133,7 @@ export default function AdminOrdersPage() {
                 {order.items.map((item) => (
                   <div key={item._id} className="flex items-center gap-2">
                     {item.image?.url && (
-                      <div className="relative w-full h-18 sm:h-34 md:h-50 lg:h-64">
+                      <div className="relative w-14 h-10 sm:h-10 md:h-12 lg:h-12">
                              <Image src={item.image.url} alt={item.name} fill className="object-cover object-center" />
                            </div>
                     )}

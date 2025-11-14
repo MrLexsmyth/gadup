@@ -6,13 +6,15 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../../../context/AuthContext";
 import { useCart } from "../../../context/CartContext";
-import { Playfair_Display } from "next/font/google";
-import API from "../../../lib/api"; // use shared Axios instance
+import API from "../../../lib/api"; 
+import { Playfair_Display } from "next/font/google"; 
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
+
+
 
 interface Product {
   _id: string;

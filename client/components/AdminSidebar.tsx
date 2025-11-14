@@ -118,7 +118,7 @@ export default function AdminSidebar() {
 
         {/* Footer */}
         <div className="border-t border-gray-700 pt-4 mt-6 text-center text-xs text-gray-500">
-          © {new Date().getFullYear()} Goodness Store
+          © {new Date().getFullYear()} GadUp
         </div>
       </motion.aside>
     </>
