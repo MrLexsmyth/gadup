@@ -73,7 +73,7 @@ export default function DualImageSection() {
               Style that speaks confidence — explore our latest collection now.
             </p>
             <p className="text-lg md:text-xl font-semibold text-blue-700">
-              From £499.00
+              From ₦44,999.99
             </p>
           </div>
         </div>

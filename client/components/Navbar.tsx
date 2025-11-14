@@ -138,7 +138,7 @@ export default function Navbar() {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="w-8 h-8 rounded-full bg-[#008080] text-white flex items-center justify-center font-semibold cursor-pointer"
               >
-                {user?.name.charAt(0).toUpperCase() || <User className="w-8 h-8" />}
+                {user?.name.charAt(0).toUpperCase() || <User className="w-6 h-6" />}
               </div>
               {userMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 w-40 bg-white shadow-lg rounded-lg flex flex-col py-1 z-50">
