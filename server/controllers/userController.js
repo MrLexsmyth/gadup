@@ -8,14 +8,14 @@ import jwt from "jsonwebtoken";
 // ==============================
 const generateToken = (res, userId) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: "3d",
   });
 
   res.cookie("jwt", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 3 * 24 * 60 * 60 * 1000, // 30 days
   });
 
   return token;
@@ -58,21 +58,19 @@ export const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
-    if (!user || !(await user.matchPassword(password))) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    if (user && (await user.matchPassword(password))) {
+      generateToken(res, user._id);
+
+      return res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      });
     }
 
-    const token = generateToken(res, user._id);
-
-    res.json({
-      message: "Login successful",
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(401).json({ message: "Invalid email or password" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
 };
 
