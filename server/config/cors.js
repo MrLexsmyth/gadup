@@ -1,7 +1,7 @@
 // backend/config/cors.js
 export const corsOptions = {
    origin: [
-    "https://gadup.vercel.app",
+    "https://gadup-1.onrender.com",
     "http://localhost:3000"
   ],
   credentials: true,             // allow cookies
