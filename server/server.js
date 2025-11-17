@@ -5,7 +5,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { corsOptions } from "./config/cors.js";
 
-// Routes
 import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -17,21 +16,18 @@ import verifyPaymentRoutes from "./routes/verifyPayment.js";
 dotenv.config();
 const app = express();
 
-// **VERY IMPORTANT**
-app.set("trust proxy", 1); 
+app.set("trust proxy", 1); // required for cookies on Render HTTPS
 
-// CORS
+// CORS MUST COME BEFORE JSON + COOKIEPARSER
 app.use(cors(corsOptions));
-
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// MongoDB
+// DB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.error("MongoDB Error:", err));
+  .catch((err) => console.error(err));
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -45,4 +41,4 @@ app.use("/api/payment/verify", verifyPaymentRoutes);
 app.get("/", (req, res) => res.send("Server Running"));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));

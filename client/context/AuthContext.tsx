@@ -14,7 +14,7 @@ interface AuthContextType {
   user: UserType | null;
   setUser: (user: UserType | null) => void;
   loading: boolean;
-  refreshUser: () => Promise<void>; // optional: force refetch user
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUser = async () => {
     setLoading(true);
     try {
-      const res = await API.get<UserType>("/auth/me"); // backend returns user if cookie valid
+      const res = await API.get<UserType>("/auth/me"); // must have withCredentials
       setUser(res.data);
     } catch {
       setUser(null);
@@ -44,6 +44,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     fetchUser();
   }, []);
+
+  // Only render children after loading to prevent flash
+  if (loading) return <div>Loading...</div>;
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, refreshUser: fetchUser }}>
