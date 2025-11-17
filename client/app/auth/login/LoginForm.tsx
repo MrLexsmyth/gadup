@@ -8,7 +8,7 @@ import { loginUser } from "../../../services/authService";
 import { AxiosError } from "axios";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react"; 
-import { signIn } from "next-auth/react";
+import { useAuth } from "../../../context/AuthContext";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -17,8 +17,9 @@ const playfair = Playfair_Display({
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // client-only, safe
+  const searchParams = useSearchParams();
   const redirect = searchParams?.get("redirect") || "/";
+  const { refreshUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
@@ -35,10 +36,9 @@ export default function LoginPage() {
     setError("");
 
     try {
-      
-      const user = await loginUser(form);
-      localStorage.setItem("user", JSON.stringify(user));
-      router.push(redirect);
+      await loginUser(form);          // ✅ send login request
+      await refreshUser();            // ✅ fetch user from backend cookie
+      router.push(redirect);          // redirect after login
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Invalid credentials");
@@ -47,38 +47,22 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await signIn("google", { callbackUrl: redirect });
-    } catch {
-      setError("Google login failed. Try again.");
-      setLoading(false);
-    }
-  };
-
   return (
     <div className={`min-h-screen flex flex-col md:flex-row ${playfair.className}`}>
-      
       <div className="hidden md:flex flex-1 relative">
         <Image src="/login.jpg" alt="Log In Image" fill className="object-cover" priority />
       </div>
 
-      {/* Form */}
       <div className="flex-1 flex justify-center items-center md:p-6 bg-gradient-to-b from-gray-50 to-white">
         <form
           onSubmit={handleSubmit}
           className="w-full max-w-md md:px-2 bg-white md:bg-transparent shadow-sm md:shadow-none rounded-lg md:rounded-none p-6 md:p-0"
         >
-          {/* Header */}
           <div className="flex flex-col justify-center items-center mb-6">
             <Image src="/bagg.webp" alt="Login" width={90} height={90} className="object-contain" priority />
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mt-4 mb-4">
-              Welcome Back!
-            </h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mt-4 mb-4">Welcome Back!</h2>
             <p className="text-gray-600 text-sm md:text-base text-center mt-2 px-3">
-              Sign in to explore the latest tech trends, enjoy exclusive offers, and stay ahead with the hottest gadgets.
+              Sign in to explore the latest tech trends and exclusive offers.
             </p>
           </div>
 
@@ -107,7 +91,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute cursor-pointer right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -119,16 +103,6 @@ export default function LoginPage() {
             className="w-full bg-[#00817c] text-white py-3 rounded cursor-pointer transition hover:bg-[#006c65] mb-4"
           >
             {loading ? "Logging in..." : "Login"}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 py-3 rounded mb-4 cursor-pointer transition hover:bg-gray-100 shadow-sm"
-          >
-            <Image src="/google.png" alt="Google logo" width={18} height={18} className="object-contain" />
-            <span className="text-[#00817c] font-medium">Sign in with Google</span>
           </button>
 
           <h2 className="text-center text-gray-700 text-sm md:text-base">
