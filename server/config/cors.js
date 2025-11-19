@@ -1,7 +1,7 @@
 export const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      "https://gadup.vercel.ap",
+      "https://gadup.vercel.app",
       "https://gadup.onrender.com",
       "http://localhost:3000"
     ];
