@@ -6,7 +6,7 @@ export const corsOptions = {
       "http://localhost:3000"
     ];
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true); // ✅ must be true
+      callback(null, true); 
     } else {
       callback(new Error("Not allowed by CORS"));
     }

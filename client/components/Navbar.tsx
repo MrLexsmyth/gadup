@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "../context/CartContext";
+import { motion, AnimatePresence } from "framer-motion";
 import CartDrawer from "./CartDrawer";
 import { ShoppingCart, User, Menu, X, LogIn, UserPlus, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
@@ -57,13 +58,14 @@ const handleLogout = async () => {
       return (
         <>
           <Link href="/auth/login">
-            <button className="w-full flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
-              <LogIn /> Sign In
+            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
+              <LogIn className="w-5 h-5" /> Sign In
             </button>
           </Link>
+            <div className="w-full h-[1px] bg-gray-300"></div>
           <Link href="/auth/signup">
-            <button className="w-full flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg">
-              <UserPlus /> Sign Up
+            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg">
+              <UserPlus  className="w-5 h-5"/> Sign Up
             </button>
           </Link>
         </>
@@ -73,15 +75,16 @@ const handleLogout = async () => {
     return (
       <>
         <Link href="/profile">
-          <button className="w-full flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
-            <UserPlus /> Account
+          <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
+            <UserPlus className="w-5 h-5 "/> Account
           </button>
         </Link>
+          <div className="w-full h-[1px] bg-gray-300"></div>
         <button
-          className="w-full flex items-center gap-2 py-2 px-3 text-sm text-red-900 font-medium rounded-lg"
+          className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-red-900 font-medium rounded-lg"
           onClick={handleLogout}
         >
-          <LogOut /> Log Out
+          <LogOut className="w-5 h-5 "/> Log Out
         </button>
       </>
     );
@@ -135,41 +138,82 @@ const handleLogout = async () => {
                 {user?.name.charAt(0).toUpperCase() || <User className="w-6 h-6" />}
               </div>
               {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-40 bg-white shadow-lg rounded-lg flex flex-col py-1 z-50">
-                  {renderUserMenu()}
-                </div>
+               <div className="  fixed top-14 right-0 w-40 bg-white shadow-lg rounded-lg flex flex-col py-1 z-50">
+  {renderUserMenu()}
+</div>
+
               )}
             </div>
 
             {/* Mobile menu toggle */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none md:hidden"
+              className="text-[#008080] hover:text-[#008080] focus:outline-none md:hidden"
             >
-              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <>
-            <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)}></div>
-            <div className="fixed top-16 left-0 w-full bg-white shadow-lg rounded-b-xl flex flex-col items-center py-6 gap-4 md:hidden z-50 transition-transform duration-300">
-              {categories.map((cat) => (
-                <Link
-                  key={cat.name}
-                  href={cat.link}
-                  className="w-full text-start cursor-pointer px-16 text-[#008080] font-medium"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {cat.name}
-                </Link>
-              ))}
-              <div className="w-full h-[1px] bg-gray-300"></div>
-              <div className="w-full flex flex-col gap-2 px-16">{renderUserMenu()}</div>
-            </div>
-          </>
+<>
+  {/* Overlay */}
+  <AnimatePresence>
+    {menuOpen && (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="fixed inset-0 bg-black z-40"
+        onClick={() => setMenuOpen(false)}
+      />
+    )}
+  </AnimatePresence>
+
+  {/* Slide Menu */}
+  <AnimatePresence>
+    
+    {menuOpen && (
+      <motion.div
+        initial={{ x: "-100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{
+          type: "spring",
+          stiffness: 80,
+          damping: 15,
+          duration: 0.3,
+        }}
+        className="fixed top-0 left-0 h-screen w-[85%] max-w-[350px] bg-white shadow-lg 
+        z-50 flex flex-col items-start py-6 gap-4 md:hidden"
+      >
+        {categories.map((cat, i) => (
+          <motion.div
+            key={cat.name}
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.1 * i }}
+            className="w-full"
+          >
+            <Link
+              href={cat.link}
+              className="w-full text-start cursor-pointer px-8 text-[#008080] font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              {cat.name}
+            </Link>
+          </motion.div>
+          
+        ))}
+          
+       
+        
+      </motion.div>
+    )}
+  </AnimatePresence>
+</>
         )}
       </nav>
     </>
