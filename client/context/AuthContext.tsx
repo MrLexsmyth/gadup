@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import API from "../lib/api";
 
@@ -46,7 +47,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // Only render children after loading to prevent flash
-  if (loading) return <div>Loading...</div>;
+  if (loading) return  <div className="flex flex-col items-center justify-center py-16">
+                              <Image src="/gadup2.png" alt="Loading" width={300} height={300} className="animate-pulse" />
+                          </div>;
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, refreshUser: fetchUser }}>
