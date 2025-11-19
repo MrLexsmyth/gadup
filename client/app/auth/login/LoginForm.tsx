@@ -36,9 +36,9 @@ export default function LoginPage() {
     setError("");
 
     try {
-      await loginUser(form);          // ✅ send login request
-      await refreshUser();            // ✅ fetch user from backend cookie
-      router.push(redirect);          // redirect after login
+      await loginUser(form);  
+      await refreshUser();           
+      router.push(redirect);          
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;
       setError(error.response?.data?.message || "Invalid credentials");

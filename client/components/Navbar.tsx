@@ -37,7 +37,7 @@ export default function Navbar() {
   // Logout
 const handleLogout = async () => {
   try {
-    await API.post("/auth/logout"); // cookies sent automatically
+    await API.post("/auth/logout"); 
     clearCart();
     setUser(null);
     router.push("/");
