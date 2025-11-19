@@ -117,7 +117,7 @@ const handleLogout = async () => {
           </ul>
 
           {/* Right section */}
-          <div className="flex items-center gap-2 relative">
+          <div className="flex items-center gap-4 relative">
             {/* Cart */}
             <div className="relative cursor-pointer" onClick={() => setCartOpen(true)}>
               <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-[#008080] transition-colors duration-200" />
