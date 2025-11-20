@@ -191,7 +191,7 @@ const handleLogout = async () => {
   style={{ fontFamily: "Playfair Display, serif" }}
 >
 
-  {/* Close Button Inside Sidebar */}
+ 
   <button
     onClick={() => setMenuOpen(false)}
     className="absolute top-4 right-4 text-[#008080] hover:text-[#008080] focus:outline-none"
