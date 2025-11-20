@@ -83,31 +83,35 @@ export default function DashboardLayout({
         )}
       </AnimatePresence>
 
-      <div className="flex-1 flex flex-col">
-        <header className="flex items-center justify-between bg-white shadow px-4 py-3 md:px-6">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 rounded-md border border-gray-300 hover:bg-gray-200 transition"
-            >
-              {sidebarOpen ? "✖" : "☰"}
-            </button>
-            <h1 className="text-lg font-semibold text-gray-700">Dashboard</h1>
-          </div>
+     <div className="flex-1 flex flex-col max-h-screen">
+  
+    <header className=" fixed w-[1280] flex items-center justify-between bg-white shadow px-4 py-3 md:px-6">
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="md:hidden p-2 rounded-md border border-gray-300 hover:bg-gray-200 transition"
+      >
+        {sidebarOpen ? "✖" : "☰"}
+      </button>
+      <h1 className="text-lg font-semibold text-gray-700">Dashboard</h1>
+    </div>
 
-          <div className="flex items-center gap-3">
-            {adminName ? (
-              <div className="hidden md:block text-gray-700 text-sm font-medium">
-                Welcome back, <span className="font-semibold">{adminName}</span>
-              </div>
-            ) : (
-              <div className="text-gray-400 text-sm">Admin</div>
-            )}
-          </div>
-        </header>
+    <div className="flex items-center gap-3">
+      {adminName ? (
+        <div className="hidden md:block text-gray-700 text-sm font-medium">
+          Welcome back, <span className="font-semibold">{adminName}</span>
+        </div>
+      ) : (
+        <div className="text-gray-400 text-sm">Admin</div>
+      )}
+    </div>
+  </header>
 
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
-      </div>
+  <main className="flex-1 mt-[64px] p-4 md:p-6 overflow-y-auto">
+    {children}
+  </main>
+</div>
+
     </div>
   );
 }

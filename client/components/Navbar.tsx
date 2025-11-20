@@ -34,7 +34,7 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+  
   // Logout
 const handleLogout = async () => {
   try {
@@ -177,40 +177,48 @@ const handleLogout = async () => {
     
     {menuOpen && (
       <motion.div
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "-100%" }}
-        transition={{
-          type: "spring",
-          stiffness: 80,
-          damping: 15,
-          duration: 0.3,
-        }}
-        className="fixed top-0 left-0 h-screen w-[85%] max-w-[350px] bg-white shadow-lg 
-        z-50 flex flex-col items-start py-6 gap-4 md:hidden"
+  initial={{ x: "-100%" }}
+  animate={{ x: 0 }}
+  exit={{ x: "-100%" }}
+  transition={{
+    type: "spring",
+    stiffness: 80,
+    damping: 15,
+    duration: 0.3,
+  }}
+  className="fixed top-0 left-0 h-screen w-[100%] max-w-[350px] bg-white shadow-lg 
+  z-50 flex flex-col items-start py-6 gap-4 md:hidden "
+  style={{ fontFamily: "Playfair Display, serif" }}
+>
+
+  {/* Close Button Inside Sidebar */}
+  <button
+    onClick={() => setMenuOpen(false)}
+    className="absolute top-4 right-4 text-[#008080] hover:text-[#008080] focus:outline-none"
+  >
+    <X size={22} />
+  </button>
+
+  {categories.map((cat, i) => (
+    <motion.div
+      key={cat.name}
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ delay: 0.1 * i }}
+      className="w-full"
+    >
+      <Link
+        href={cat.link}
+        className="w-full text-start cursor-pointer px-8 text-[#008080] font-medium"
+        onClick={() => setMenuOpen(false)}
       >
-        {categories.map((cat, i) => (
-          <motion.div
-            key={cat.name}
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 * i }}
-            className="w-full"
-          >
-            <Link
-              href={cat.link}
-              className="w-full text-start cursor-pointer px-8 text-[#008080] font-medium"
-              onClick={() => setMenuOpen(false)}
-            >
-              {cat.name}
-            </Link>
-          </motion.div>
-          
-        ))}
-          
-       
-        
-      </motion.div>
+        {cat.name}
+      </Link>
+    </motion.div>
+  ))}
+
+</motion.div>
+
     )}
   </AnimatePresence>
 </>

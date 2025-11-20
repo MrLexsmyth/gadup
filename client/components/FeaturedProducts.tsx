@@ -29,7 +29,7 @@ export default function FeaturedProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await API.get<Product[]>("/products"); // Axios automatically parses JSON
+        const { data } = await API.get<Product[]>("/products"); 
         // Shuffle and pick 6 random products
         const selected = data.sort(() => 0.5 - Math.random()).slice(0, 6);
         setProducts(selected);
