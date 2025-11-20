@@ -17,6 +17,7 @@ const menuItems = [
   { name: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/admin/dashboard" },
   { name: "Products", icon: <Package size={20} />, path: "/admin/dashboard/products" },
   { name: "Orders", icon: <ShoppingBag size={20} />, path: "/admin/dashboard/orders" },
+  { name: "Analytics / Overview", icon: <ShoppingBag size={20} />, path: "/admin/dashboard/income" },
   { name: "Users", icon: <Users size={20} />, path: "/admin/users" },
   { name: "Settings", icon: <Settings size={20} />, path: "/admin/settings" },
 ];
