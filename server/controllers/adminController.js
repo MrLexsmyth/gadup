@@ -83,7 +83,7 @@ export const changePassword = async (req, res) => {
   }
 };
 
-// ✅ Get current logged-in admin
+//  Get current logged-in admin
 export const getAdminProfile = async (req, res) => {
   try {
     if (!req.user) {

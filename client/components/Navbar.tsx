@@ -58,13 +58,15 @@ const handleLogout = async () => {
       return (
         <>
           <Link href="/auth/login">
-            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
+            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100"
+            style={{ fontFamily: "Playfair Display, serif" }}>
               <LogIn className="w-5 h-5" /> Sign In
             </button>
           </Link>
             <div className="w-full h-[1px] bg-gray-300"></div>
           <Link href="/auth/signup">
-            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg">
+            <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg"
+            style={{ fontFamily: "Playfair Display, serif" }}>
               <UserPlus  className="w-5 h-5"/> Sign Up
             </button>
           </Link>
@@ -75,7 +77,8 @@ const handleLogout = async () => {
     return (
       <>
         <Link href="/profile">
-          <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100">
+          <button className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-gray-700 font-medium rounded-lg hover:bg-gray-100"
+          style={{ fontFamily: "Playfair Display, serif" }}>
             <UserPlus className="w-5 h-5 "/> Account
           </button>
         </Link>
@@ -83,6 +86,7 @@ const handleLogout = async () => {
         <button
           className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 text-sm text-red-900 font-medium rounded-lg"
           onClick={handleLogout}
+          style={{ fontFamily: "Playfair Display, serif" }}
         >
           <LogOut className="w-5 h-5 "/> Log Out
         </button>
@@ -98,14 +102,16 @@ const handleLogout = async () => {
         }`}
       >
         <div className="px-4 py-3 flex items-center justify-between max-w-7xl mx-auto">
-          {/* Logo */}
-          <Link href="/" className="flex items-center hover:scale-105 transition-transform duration-300">
+        
+          <Link href="/" className="flex items-center hover:scale-105 transition-transform duration-300"
+          >
             <Image src="/gadup2.png" alt="Logo" width={45} height={45} className="object-contain" loading="eager" />
-            <h1 className="text-[#00817c] ml-1 font-serif text-xl font-bold">GadUp</h1>
+            <h1 className="text-[#00817c] ml-1 font-serif text-xl font-bold"
+            >GadUp</h1>
           </Link>
 
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex flex-1 justify-center gap-8 font-medium text-[#008080] font-serif">
+          <ul className="hidden md:flex flex-1 justify-center gap-8 font-medium text-[#008080] font-serif"
+          style={{ fontFamily: "Playfair Display, serif" }}>
             {categories.map((cat) => (
               <li
                 key={cat.name}
@@ -139,8 +145,8 @@ const handleLogout = async () => {
               </div>
               {userMenuOpen && (
                <div className="  fixed top-14 right-0 w-40 bg-white shadow-lg rounded-lg flex flex-col py-1 z-50">
-  {renderUserMenu()}
-</div>
+                   {renderUserMenu()}
+               </div>
 
               )}
             </div>
