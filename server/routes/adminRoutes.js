@@ -7,7 +7,7 @@ import { getIncomeStats } from "../controllers/IncomeController.js";
 const router = express.Router();
 
 // Admin login route
-router.post("/login", protect, admin, adminLogin);
+router.post("/login",  adminLogin);
 
 //  Get logged-in admin profile
 router.get("/me", protect, admin, getAdminProfile);
