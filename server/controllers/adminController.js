@@ -2,9 +2,9 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 
-// ==========================
+
 // Generate JWT Helper
-// ==========================
+
 const generateToken = (res, userId) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "1d",
@@ -20,9 +20,8 @@ res.cookie("jwt", token, {
 
 };
 
-// ==========================
 // Admin Login Controller
-// ==========================
+
 export const adminLogin = async (req, res) => {
   const { email, password } = req.body;
 

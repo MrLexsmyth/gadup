@@ -3,27 +3,26 @@ import Order from "../models/Order.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// ==============================
+
 // Generate JWT + Set Cookie
-// ==============================
+
 const generateToken = (res, userId) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "3d",
   });
 
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: true,           
-    sameSite: "none",       
+res.cookie("jwt", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production", // true in production
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",       
     maxAge: 3 * 24 * 60 * 60 * 1000, 
   });
 
   return token;
 };
 
-// ==============================
 // REGISTER USER
-// ==============================
+
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -49,9 +48,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// ==============================
 // LOGIN USER
-// ==============================
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -74,9 +71,9 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// ==============================
+
 // GET USER PROFILE + ORDERS
-// ==============================
+
 export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");

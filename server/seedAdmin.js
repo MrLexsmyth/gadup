@@ -19,7 +19,7 @@ const seedAdmin = async () => {
       isAdmin: true,
     });
 
-    console.log("✅ New admin created:");
+    console.log(" New admin created:");
     console.log(admin);
     process.exit();
   } catch (error) {
