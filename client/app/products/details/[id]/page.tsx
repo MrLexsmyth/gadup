@@ -19,6 +19,7 @@ interface Product {
   name: string;
   image?: { url: string };
   price: number;
+  discountPrice?: number; // added discount support
   category: string;
   description: string;
 }
@@ -31,6 +32,7 @@ export default function ProductPage() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -54,11 +56,22 @@ export default function ProductPage() {
       router.push(`/auth/login?redirect=/product/${id}`);
       return;
     }
-    if (product) addToCart({ ...product, quantity: 1 });
+    if (product) {
+      setAddingToCart(true);
+      const finalPrice = product.discountPrice ?? product.price;
+      addToCart({ ...product, price: finalPrice, quantity: 1 });
+      setAddingToCart(false);
+    }
   };
 
   if (loading) return <p className="p-6 text-center">Loading product...</p>;
   if (!product) return <p className="p-6 text-center">Product not found.</p>;
+
+  const finalPrice = product.discountPrice ?? product.price;
+  const hasDiscount = product.discountPrice && product.discountPrice < product.price;
+  const discountPercentage = hasDiscount
+    ? Math.round(((product.price - product.discountPrice!) / product.price) * 100)
+    : 0;
 
   return (
     <div className={playfair.className + " max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-6"}>
@@ -77,9 +90,16 @@ export default function ProductPage() {
       <div className="flex-1 flex flex-col">
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
         <p className="text-gray-500 mb-4 capitalize">{product.category}</p>
-        <p className="text-red-600 font-bold text-2xl mb-4">
-          ₦{product.price.toLocaleString()}
-        </p>
+
+        {hasDiscount ? (
+          <div className="flex items-center gap-3 mb-4">
+            <p className="text-red-600 font-bold text-2xl">₦{finalPrice.toLocaleString()}</p>
+            <p className="text-gray-400 line-through">₦{product.price.toLocaleString()}</p>
+            <p className="text-green-600 font-semibold">-{discountPercentage}%</p>
+          </div>
+        ) : (
+          <p className="text-red-600 font-bold text-2xl mb-4">₦{finalPrice.toLocaleString()}</p>
+        )}
 
         <div
           className="text-gray-700 mb-6"
@@ -88,9 +108,10 @@ export default function ProductPage() {
 
         <button
           onClick={handleAddToCart}
+          disabled={addingToCart}
           className="w-full md:w-auto bg-[#00817c] text-white py-3 px-6 rounded hover:bg-[#006c65] transition mb-4"
         >
-          Add to Cart
+          {addingToCart ? "Adding..." : "Add to Cart"}
         </button>
 
         <button

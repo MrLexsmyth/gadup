@@ -6,9 +6,11 @@ const orderSchema = new mongoose.Schema({
     {
       _id: String,
       name: String,
-      price: Number,
+      price: Number, // actual price used for the order (discountPrice if available)
       quantity: Number,
       image: { url: String },
+      discountPrice: { type: Number, default: 0 }, // discount applied
+      discountPercentage: { type: Number, default: 0 }, // discount percentage applied
     },
   ],
   total: { type: Number, required: true },
@@ -25,6 +27,7 @@ const orderSchema = new mongoose.Schema({
   userName: String,
   userEmail: String,
   status: { type: String, default: "pending" },
+  reference: { type: String }, // store payment reference
   createdAt: { type: Date, default: Date.now },
 });
 

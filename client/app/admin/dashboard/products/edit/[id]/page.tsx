@@ -10,11 +10,15 @@ interface Product {
   name: string;
   description: string;
   price: number;
+  discountPrice?: number;
+  discountPercentage?: number;
+  stock: number;   
   image?: {
     url: string;
     public_id: string;
   };
 }
+
 
 export default function EditProductPage() {
   const { id } = useParams();
@@ -23,6 +27,10 @@ export default function EditProductPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState<number>(0);
+  const [discountPrice, setDiscountPrice] = useState<number>(0);
+  const [stock, setStock] = useState<number>(0);
+
+  const [discountPercentage, setDiscountPercentage] = useState<number>(0);
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,6 +45,9 @@ export default function EditProductPage() {
         setName(data.name);
         setDescription(data.description);
         setPrice(data.price);
+        setStock(data.stock ?? 0);
+        setDiscountPrice(data.discountPrice || 0);
+        setDiscountPercentage(data.discountPercentage || 0);
         setPreview(data.image?.url || null);
       } catch (error) {
         console.error("Failed to fetch product", error);
@@ -45,6 +56,16 @@ export default function EditProductPage() {
 
     fetchProduct();
   }, [id]);
+
+  // Calculate discount percentage whenever price or discountPrice changes
+  useEffect(() => {
+    if (price && discountPrice && discountPrice > 0 && discountPrice < price) {
+      const percentage = ((price - discountPrice) / price) * 100;
+      setDiscountPercentage(Math.round(percentage));
+    } else {
+      setDiscountPercentage(0);
+    }
+  }, [price, discountPrice]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,6 +84,10 @@ export default function EditProductPage() {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price.toString());
+      formData.append("discountPrice", discountPrice.toString());
+      formData.append("discountPercentage", discountPercentage.toString());
+      formData.append("stock", stock.toString());
+
       if (image) formData.append("image", image);
 
       await API.put(`/products/${id}`, formData, {
@@ -114,6 +139,36 @@ export default function EditProductPage() {
             className="w-full border p-2 rounded"
             required
           />
+        </div>
+        <div>
+  <label className="block text-sm font-medium">Stock Quantity</label>
+ <input
+  type="number"
+  value={stock ?? 0}   // 🚀 prevents NaN
+  onChange={(e) => setStock(Number(e.target.value))}
+  className="w-full border p-2 rounded"
+  min={0}
+  required
+/>
+
+</div>
+
+
+        <div>
+          <label className="block text-sm font-medium">Discount Price</label>
+          <input
+            type="number"
+            value={discountPrice ?? ""}
+            onChange={(e) => setDiscountPrice(parseFloat(e.target.value))}
+            className="w-full border p-2 rounded"
+            min={0}
+            max={price}
+          />
+          {discountPercentage > 0 && (
+            <p className="text-sm text-green-600 mt-1">
+              Discount: {discountPercentage}%
+            </p>
+          )}
         </div>
 
         <div>

@@ -1,24 +1,42 @@
 import Product from "../models/Product.js";
 import cloudinary from "../config/cloudinary.js";
 
+// CREATE PRODUCT
 export const createProduct = async (req, res) => {
   try {
-const { name, description, price, category, brand, stock, isFeatured, imageUrl, imagePublicId } = req.body;
+    const { 
+      name,
+      description,
+      price,
+      category,
+      brand,
+      stock,
+      isFeatured,
+      discountPrice,
+      imageUrl,
+      imagePublicId
+    } = req.body;
 
+    // Calculate discountPercentage automatically
+    const discountPercentage = discountPrice
+      ? ((discountPrice / price) * 100).toFixed(0)
+      : 0;
 
-   const product = new Product({
-  name,
-  description,
-  price,
-  category,
-  brand,
-  stock,
-  isFeatured,
-  image: {
-    url: imageUrl,
-    public_id: imagePublicId,
-  },
-});
+    const product = new Product({
+      name,
+      description,
+      price,
+      category,
+      brand,
+      stock,
+      isFeatured,
+      discountPrice,
+      discountPercentage,
+      image: {
+        url: imageUrl,
+        public_id: imagePublicId,
+      },
+    });
 
     await product.save();
 
@@ -31,6 +49,7 @@ const { name, description, price, category, brand, stock, isFeatured, imageUrl, 
   }
 };
 
+// DELETE PRODUCT
 export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -51,28 +70,44 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
-// Update product
+
+// UPDATE PRODUCT
 export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
-    // Update fields from req.body
-    const { name, description, price, category, brand, stock, isFeatured } = req.body;
-    product.name = name || product.name;
-    product.description = description || product.description;
-    product.price = price || product.price;
-    product.category = category || product.category;
-    product.brand = brand || product.brand;
-    product.stock = stock || product.stock;
-    product.isFeatured = isFeatured ?? product.isFeatured;
+    const { 
+      name, description, price, category, brand, stock, isFeatured, discountPrice 
+    } = req.body;
 
-    // If a new image is uploaded
+    // Update basic fields
+    if (name !== undefined) product.name = name;
+    if (description !== undefined) product.description = description;
+    if (price !== undefined) product.price = price;
+    if (category !== undefined) product.category = category;
+    if (brand !== undefined) product.brand = brand;
+
+    // FIXED STOCK LOGIC
+    if (stock !== undefined) {
+      product.stock = Number(stock);   // this allows stock = 0
+    }
+
+    // Boolean fields
+    if (isFeatured !== undefined) product.isFeatured = isFeatured;
+
+    // Discount logic
+    if (discountPrice !== undefined) {
+      product.discountPrice = discountPrice;
+      product.discountPercentage = discountPrice
+        ? ((discountPrice / product.price) * 100).toFixed(0)
+        : 0;
+    }
+
+    // Handle image update
     if (req.file) {
-      // Delete old image
       await cloudinary.uploader.destroy(product.image.public_id);
 
-      // Upload new image to Cloudinary
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "products",
       });
@@ -84,6 +119,7 @@ export const updateProduct = async (req, res) => {
     }
 
     const updatedProduct = await product.save();
+
     res.status(200).json(updatedProduct);
   } catch (error) {
     console.error(error);
@@ -91,19 +127,16 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-
-// Get all products
-// Get all products (with optional category filter)
+// GET ALL PRODUCTS (with optional category filter)
 export const getProducts = async (req, res) => {
   try {
     const { category } = req.query;
     let products;
 
     if (category) {
-      // Filter by category, case-insensitive
       products = await Product.find({
         category: { $regex: new RegExp(category, "i") },
-      }).sort({ createdAt: -1 }); // newest first
+      }).sort({ createdAt: -1 });
     } else {
       products = await Product.find().sort({ createdAt: -1 });
     }
@@ -114,7 +147,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
-// Get single product by ID
+// GET SINGLE PRODUCT BY ID
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

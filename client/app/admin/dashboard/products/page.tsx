@@ -9,6 +9,9 @@ interface Product {
   _id: string;
   name: string;
   price: number;
+  discountPrice?: number;
+  discountPercentage?: number;
+   stock: number;
   category: string;
   image?: { url: string };
 }
@@ -16,6 +19,7 @@ interface Product {
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -61,39 +65,66 @@ export default function ProductsPage() {
       ) : (
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product) => (
-            <div
-              key={product._id}
-              className="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
-            >
-              <Image
-                src={product.image?.url || "/placeholder.jpg"}
-                alt={product.name}
-                width={400}
-                height={300}
-                className="h-40 w-full object-cover rounded"
-              />
-              <h3 className="font-semibold mt-3">{product.name}</h3>
-              <p className="text-gray-600">
-                ₦{product.price.toLocaleString()}
-              </p>
-              <p className="text-sm text-gray-500">
-                {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-              </p>
-              <div className="flex justify-between mt-3">
-                <Link
-                  href={`/admin/dashboard/products/edit/${product._id}`}
-                  className="text-blue-600"
-                >
-                  Edit
-                </Link>
-                <button
-                  onClick={() => handleDelete(product._id)}
-                  className="text-red-600"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
+           <div
+  key={product._id}
+  className="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
+>
+  <Image
+    src={product.image?.url || "/placeholder.jpg"}
+    alt={product.name}
+    width={400}
+    height={300}
+    className="h-40 w-full object-cover rounded"
+  />
+
+  <h3 className="font-semibold mt-3">{product.name}</h3>
+
+  {product.discountPrice && product.discountPrice > 0 ? (
+    <p className="text-red-600 font-bold">
+      ₦{product.discountPrice.toLocaleString()}{" "}
+      <span className="line-through text-gray-500 ml-2">
+        ₦{product.price.toLocaleString()}
+      </span>{" "}
+      <span className="text-green-600 ml-1">
+        ({100 - (product.discountPercentage ?? 0)}% off)
+      </span>
+    </p>
+  ) : (
+    <p className="text-gray-600 font-bold">
+      ₦{product.price.toLocaleString()}
+    </p>
+  )}
+
+  <p className="text-sm text-gray-500">
+    {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+  </p>
+
+  {/* 🟩 STOCK DISPLAY HERE */}
+  <p className="text-sm font-medium mt-1">
+    Stock:{" "}
+    {product.stock === 0 ? (
+      <span className="text-red-600 font-bold">Out of Stock</span>
+    ) : (
+      <span className="text-green-700">{product.stock}</span>
+    )}
+  </p>
+
+  <div className="flex justify-between mt-3">
+    <Link
+      href={`/admin/dashboard/products/edit/${product._id}`}
+      className="text-blue-600"
+    >
+      Edit
+    </Link>
+    <button
+      onClick={() => handleDelete(product._id)}
+      className="text-red-600"
+    >
+      Delete
+    </button>
+  </div>
+</div>
+
           ))}
         </div>
       )}

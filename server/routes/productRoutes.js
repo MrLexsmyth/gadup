@@ -1,6 +1,6 @@
 // server/routes/productRoutes.js
 import express from "express";
-import multer from "multer"; // ✅ Import multer
+import multer from "multer"; // Import multer
 import { protect, admin } from "../middleware/authMiddleware.js";
 import {
   createProduct,

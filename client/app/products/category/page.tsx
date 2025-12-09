@@ -21,6 +21,8 @@ interface Product {
   name: string;
   image?: { url: string };
   price: number;
+   discountPrice?: number;
+  discountPercentage?: number;
   category: string;
 }
 
@@ -161,9 +163,25 @@ export default function CategoryPage() {
                   <p className="text-gray-500 text-sm capitalize">
                     {product.category}
                   </p>
-                  <p className="font-bold mt-1 text-red-600">
+                  {/* <p className="font-bold mt-1 text-red-600">
                     ₦{product.price.toLocaleString()}
-                  </p>
+                  </p> */}
+                    {product.discountPrice && product.discountPrice > 0 ? (
+  <p className="text-red-600 font-bold">
+    ₦{product.discountPrice.toLocaleString()}{" "}
+    <span className="line-through text-gray-500 ml-2">
+      ₦{product.price.toLocaleString()}
+    </span>{" "}
+   <span className="text-green-600 ml-1">
+  ({100 - (product.discountPercentage ?? 0)}%
+</span>
+
+  </p>
+) : (
+  <p className="text-gray-600 font-bold">
+    ₦{product.price.toLocaleString()}
+  </p>
+)}
 
                   <Link
                     href={`/products/details/${product._id}`}

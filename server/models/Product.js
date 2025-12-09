@@ -41,6 +41,22 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Please enter product price"],
     },
+    discountPrice: {
+  type: Number,
+  default: 0,
+  validate: {
+    validator: function (value) {
+      return value <= this.price;
+    },
+    message: "Discount price cannot be greater than product price",
+  },
+},
+
+discountPercentage: {
+  type: Number,
+  default: 0,
+},
+
     category: {
       type: String,
       required: [true, "Please specify product category"],

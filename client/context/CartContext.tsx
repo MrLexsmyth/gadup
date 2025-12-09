@@ -5,7 +5,8 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 export interface CartItem {
   _id: string;
   name: string;
-  price: number;
+  price: number;            // original price
+  discountPrice?: number;   // optional discounted price
   category: string;
   image?: { url: string };
   quantity: number;
@@ -18,6 +19,7 @@ interface CartContextType {
   clearCart: () => void;
   cartCount: number;
   updateQuantity: (id: string, newQty: number) => void;
+  cartTotal: number;
 }
 
 const CartContext = createContext<CartContextType>({
@@ -27,6 +29,7 @@ const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   cartCount: 0,
   updateQuantity: () => {},
+  cartTotal: 0,
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -53,43 +56,67 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [cart]);
 
+  // Add item to cart
   const addToCart = (item: CartItem) => {
+    const priceToUse =
+      item.discountPrice && item.discountPrice < item.price
+        ? item.discountPrice
+        : item.price;
+
     setCart((prev) => {
       const exists = prev.find((i) => i._id === item._id);
       if (exists) {
         return prev.map((i) =>
-          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+          i._id === item._id
+            ? { ...i, quantity: i.quantity + 1, price: priceToUse }
+            : i
         );
       } else {
-        return [...prev, { ...item, quantity: 1 }];
+        return [...prev, { ...item, quantity: 1, price: priceToUse }];
       }
     });
   };
 
+  // Remove item from cart
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((item) => item._id !== id));
   };
 
- const clearCart = () => {
-  setCart([]);
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("cart");
-  }
-};
+  // Clear cart
+  const clearCart = () => {
+    setCart([]);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("cart");
+    }
+  };
 
-
-  // ✅ Add this function
+  // Update quantity of a cart item
   const updateQuantity = (id: string, newQty: number) => {
     setCart((prevCart) =>
-      prevCart.map((item) =>
-        item._id === id
-          ? { ...item, quantity: Math.max(newQty, 1) } // prevent quantity from going below 1
-          : item
-      )
+      prevCart.map((item) => {
+        if (item._id === id) {
+          const priceToUse =
+            item.discountPrice && item.discountPrice < item.price
+              ? item.discountPrice
+              : item.price;
+          return { ...item, quantity: Math.max(newQty, 1), price: priceToUse };
+        }
+        return item;
+      })
     );
   };
 
+  // Total items count
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  // Total cart price (respecting discount price)
+  const cartTotal = cart.reduce((acc, item) => {
+    const priceToUse =
+      item.discountPrice && item.discountPrice < item.price
+        ? item.discountPrice
+        : item.price;
+    return acc + priceToUse * item.quantity;
+  }, 0);
 
   return (
     <CartContext.Provider
@@ -99,7 +126,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         clearCart,
         cartCount,
-        updateQuantity, // ✅ Now works fine
+        updateQuantity,
+        cartTotal,
       }}
     >
       {children}

@@ -12,6 +12,7 @@ interface ProductForm {
   name: string;
   description: string;
   price: string;
+  discountPrice: string;
   category: string;
   brand: string;
   stock: string;
@@ -25,6 +26,7 @@ export default function AddProductPage() {
     name: "",
     description: "",
     price: "",
+    discountPrice: "",
     category: "fashion",
     brand: "",
     stock: "",
@@ -96,6 +98,8 @@ export default function AddProductPage() {
 
       await API.post("/products", {
         ...formData,
+        price: parseFloat(formData.price),
+        discountPrice: parseFloat(formData.discountPrice) || 0,
         imageUrl: imageData.url,
         imagePublicId: imageData.public_id,
       });
@@ -147,6 +151,17 @@ export default function AddProductPage() {
           onChange={handleChange}
           className="w-full p-2 border rounded"
           required
+        />
+
+        <input
+          type="number"
+          name="discountPrice"
+          placeholder="Discount Price (optional)"
+          value={formData.discountPrice}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          min={0}
+          max={parseFloat(formData.price) || undefined}
         />
 
         <select

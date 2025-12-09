@@ -7,6 +7,8 @@ interface Product {
   _id: string;
   name: string;
   price: number;
+  discountPrice?: number;
+  discountPercentage?: number;
   image: string;
   description: string;
 }
@@ -38,12 +40,32 @@ const ProductSlider = ({ products }: Props) => {
                 className="object-cover rounded-lg"
               />
             </div>
+
             <h3 className="mt-3 font-semibold text-lg">{product.name}</h3>
-            <p className="mt-1 text-gray-600">${product.price.toLocaleString()}</p>
-              <div
-      className="mt-2 text-gray-800"
-      dangerouslySetInnerHTML={{ __html: product.description }}
-    />
+
+            {/* Price with discount logic */}
+            {product.discountPrice && product.discountPrice > 0 ? (
+              <p className="mt-1 text-red-600 font-semibold">
+                ${product.discountPrice.toLocaleString()}{" "}
+                <span className="line-through text-gray-400 ml-2">
+                  ${product.price.toLocaleString()}
+                </span>{" "}
+                {product.discountPercentage && (
+                  <span className="text-green-600 ml-1">
+                    ({product.discountPercentage}% off)
+                  </span>
+                )}
+              </p>
+            ) : (
+              <p className="mt-1 text-gray-600 font-semibold">
+                ${product.price.toLocaleString()}
+              </p>
+            )}
+
+            <div
+              className="mt-2 text-gray-800"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           </motion.div>
         ))}
       </motion.div>
