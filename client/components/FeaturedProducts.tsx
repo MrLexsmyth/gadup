@@ -136,7 +136,7 @@ const handleAddToCart = (product: Product) => {
       ₦{product.price.toLocaleString()}
     </span>{" "}
    <span className="text-green-600 ml-1">
-  ({100 - (product.discountPercentage ?? 0)}%)
+  ({100 - (product.discountPercentage ?? 0)}% off)
 </span>
 
   </p>

@@ -17,7 +17,7 @@ const playfair = Playfair_Display({
 interface Product {
   _id: string;
   name: string;
-  image?: { url: string };
+  images: { url: string; public_id: string }[]; // support multiple images
   price: number;
   discountPrice?: number; // added discount support
   category: string;
@@ -33,6 +33,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
   useEffect(() => {
     if (!id) return;
@@ -41,6 +42,7 @@ export default function ProductPage() {
       try {
         const { data } = await API.get<Product>(`/products/${id}`);
         setProduct(data);
+        if (data.images?.length) setSelectedImage(data.images[0].url);
       } catch (err) {
         console.error("Failed to fetch product:", err);
       } finally {
@@ -75,15 +77,39 @@ export default function ProductPage() {
 
   return (
     <div className={playfair.className + " max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-6"}>
-      {/* Product Image */}
-      <div className="relative w-full md:w-1/2 h-80 md:h-[500px] bg-gray-100 rounded-lg overflow-hidden">
-        <Image
-          src={product.image?.url || "/placeholder.png"}
-          alt={product.name}
-          fill
-          className="object-cover"
-          priority
-        />
+      {/* Product Images */}
+      <div className="flex flex-col md:w-1/2 gap-4">
+        {/* Main Image */}
+        <div className="relative w-full h-80 md:h-[500px] bg-gray-100 rounded-lg overflow-hidden">
+          <Image
+            src={selectedImage || "/placeholder.png"}
+            alt={product.name}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        {/* Thumbnails */}
+        <div className="flex gap-2 overflow-x-auto mt-2">
+          {product.images.map((img, idx) => (
+            <div
+              key={idx}
+              className={`w-20 h-20 rounded overflow-hidden border ${
+                selectedImage === img.url ? "border-[#00817c]" : "border-gray-300"
+              } cursor-pointer`}
+              onClick={() => setSelectedImage(img.url)}
+            >
+              <Image
+                src={img.url}
+                alt={`Thumbnail ${idx + 1}`}
+                width={80}
+                height={80}
+                className="object-cover"
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Product Details */}

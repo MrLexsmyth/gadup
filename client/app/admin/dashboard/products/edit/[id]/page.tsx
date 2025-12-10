@@ -3,7 +3,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import API from "../../../../../../lib/api"; // centralized axios instance
+import API from "../../../../../../lib/api";
 
 interface Product {
   _id: string;
@@ -12,13 +12,9 @@ interface Product {
   price: number;
   discountPrice?: number;
   discountPercentage?: number;
-  stock: number;   
-  image?: {
-    url: string;
-    public_id: string;
-  };
+  stock: number;
+  images?: { url: string; public_id: string }[];
 }
-
 
 export default function EditProductPage() {
   const { id } = useParams();
@@ -29,26 +25,29 @@ export default function EditProductPage() {
   const [price, setPrice] = useState<number>(0);
   const [discountPrice, setDiscountPrice] = useState<number>(0);
   const [stock, setStock] = useState<number>(0);
-
   const [discountPercentage, setDiscountPercentage] = useState<number>(0);
-  const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+
+  const [existingImages, setExistingImages] = useState<{ url: string; public_id: string }[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch product on mount
+  // Fetch product
   useEffect(() => {
     if (!id) return;
 
     const fetchProduct = async () => {
       try {
         const { data } = await API.get<Product>(`/products/${id}`);
+
         setName(data.name);
         setDescription(data.description);
         setPrice(data.price);
-        setStock(data.stock ?? 0);
+        setStock(data.stock);
         setDiscountPrice(data.discountPrice || 0);
         setDiscountPercentage(data.discountPercentage || 0);
-        setPreview(data.image?.url || null);
+
+        setExistingImages(data.images || []);
       } catch (error) {
         console.error("Failed to fetch product", error);
       }
@@ -57,22 +56,25 @@ export default function EditProductPage() {
     fetchProduct();
   }, [id]);
 
-  // Calculate discount percentage whenever price or discountPrice changes
+  // Recalculate discount %
   useEffect(() => {
-    if (price && discountPrice && discountPrice > 0 && discountPrice < price) {
-      const percentage = ((price - discountPrice) / price) * 100;
-      setDiscountPercentage(Math.round(percentage));
+    if (discountPrice > 0 && discountPrice < price) {
+      setDiscountPercentage(Math.round(((price - discountPrice) / price) * 100));
     } else {
       setDiscountPercentage(0);
     }
   }, [price, discountPrice]);
 
+  // Handle new file selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setPreview(URL.createObjectURL(file));
-    }
+    const files = e.target.files;
+    if (!files) return;
+
+    const selectedFiles = Array.from(files);
+    setNewImages(selectedFiles);
+
+    const previews = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviewImages(previews);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -88,7 +90,7 @@ export default function EditProductPage() {
       formData.append("discountPercentage", discountPercentage.toString());
       formData.append("stock", stock.toString());
 
-      if (image) formData.append("image", image);
+      newImages.forEach((img) => formData.append("images", img));
 
       await API.put(`/products/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -98,7 +100,7 @@ export default function EditProductPage() {
       router.push("/admin/dashboard/products");
     } catch (error) {
       console.error("Error updating product:", error);
-      alert("❌ Failed to update product");
+      alert("Failed to update product");
     } finally {
       setLoading(false);
     }
@@ -109,6 +111,7 @@ export default function EditProductPage() {
       <h1 className="text-2xl font-semibold mb-4">Edit Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NAME */}
         <div>
           <label className="block text-sm font-medium">Product Name</label>
           <input
@@ -120,6 +123,7 @@ export default function EditProductPage() {
           />
         </div>
 
+        {/* DESCRIPTION */}
         <div>
           <label className="block text-sm font-medium">Description</label>
           <textarea
@@ -130,36 +134,38 @@ export default function EditProductPage() {
           />
         </div>
 
+        {/* PRICE */}
         <div>
           <label className="block text-sm font-medium">Price</label>
           <input
             type="number"
             value={price}
-            onChange={(e) => setPrice(parseFloat(e.target.value))}
+            onChange={(e) => setPrice(Number(e.target.value))}
             className="w-full border p-2 rounded"
             required
           />
         </div>
+
+        {/* STOCK */}
         <div>
-  <label className="block text-sm font-medium">Stock Quantity</label>
- <input
-  type="number"
-  value={stock ?? 0}   // 🚀 prevents NaN
-  onChange={(e) => setStock(Number(e.target.value))}
-  className="w-full border p-2 rounded"
-  min={0}
-  required
-/>
+          <label className="block text-sm font-medium">Stock Quantity</label>
+          <input
+            type="number"
+            value={stock ?? 0}
+            onChange={(e) => setStock(Number(e.target.value))}
+            className="w-full border p-2 rounded"
+            min={0}
+            required
+          />
+        </div>
 
-</div>
-
-
+        {/* DISCOUNT */}
         <div>
           <label className="block text-sm font-medium">Discount Price</label>
           <input
             type="number"
-            value={discountPrice ?? ""}
-            onChange={(e) => setDiscountPrice(parseFloat(e.target.value))}
+            value={discountPrice}
+            onChange={(e) => setDiscountPrice(Number(e.target.value))}
             className="w-full border p-2 rounded"
             min={0}
             max={price}
@@ -171,23 +177,57 @@ export default function EditProductPage() {
           )}
         </div>
 
+        {/* NEW IMAGES */}
         <div>
-          <label className="block text-sm font-medium">Product Image</label>
-          <input type="file" onChange={handleImageChange} accept="image/*" />
+          <label className="block text-sm font-medium">Upload New Images</label>
+          <input
+            type="file"
+            multiple
+            onChange={handleImageChange}
+            accept="image/*"
+            className="mt-1"
+          />
         </div>
 
-        {preview && (
-          <div className="mt-4">
-            <Image
-              src={preview}
-              alt="Product preview"
-              width={100}
-              height={50}
-              className="rounded shadow-md object-cover"
-            />
+        {/* EXISTING IMAGES */}
+        {existingImages.length > 0 && (
+          <div className="mt-3">
+            <p className="font-semibold mb-1 text-sm">Existing Images:</p>
+            <div className="grid grid-cols-3 gap-2">
+              {existingImages.map((img, idx) => (
+                <Image
+                  key={idx}
+                  src={img.url}
+                  alt={`existing ${idx + 1}`}
+                  width={100}
+                  height={100}
+                  className="object-cover rounded"
+                />
+              ))}
+            </div>
           </div>
         )}
 
+        {/* PREVIEW NEW IMAGES */}
+        {previewImages.length > 0 && (
+          <div className="mt-3">
+            <p className="font-semibold mb-1 text-sm">New Image Preview:</p>
+            <div className="grid grid-cols-3 gap-2">
+              {previewImages.map((src, idx) => (
+                <Image
+                  key={idx}
+                  src={src}
+                  alt={`Preview ${idx + 1}`}
+                  width={100}
+                  height={100}
+                  className="object-cover rounded"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* SUBMIT BUTTON */}
         <button
           type="submit"
           disabled={loading}

@@ -1,12 +1,14 @@
 "use client";
 
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { EditorContent, useEditor, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import ImageExtension from "@tiptap/extension-image";
-import API from "../../../../../lib/api"; // centralized axios instance
+import API from "../../../../../lib/api";
 
 interface ProductForm {
   name: string;
@@ -33,7 +35,7 @@ export default function AddProductPage() {
     isFeatured: false,
   });
 
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
   const editor: Editor | null = useEditor({
@@ -57,68 +59,84 @@ export default function AddProductPage() {
     }));
   };
 
-  const uploadImage = async () => {
-    if (!image) {
-      alert("Please select an image");
-      return null;
-    }
-    const formDataObj = new FormData();
-    formDataObj.append("image", image);
-
-    const { data } = await API.post("/upload", formDataObj, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    return data; // { url, public_id }
-  };
-
   const insertLocalImage = async (file: File) => {
     const formDataObj = new FormData();
-    formDataObj.append("image", file);
+    formDataObj.append("images", file);
 
     try {
       const { data } = await API.post("/upload", formDataObj, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (editor) editor.chain().focus().setImage({ src: data.url }).run();
+      if (editor) editor.chain().focus().setImage({ src: data.images[0].url }).run();
     } catch (err) {
       alert("Failed to upload image for editor");
       console.error(err);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  // Upload all product images to /upload
+  const uploadImages = async () => {
+    if (images.length === 0) {
+      alert("Please select at least one product image.");
+      return [];
+    }
+
+    const formDataObj = new FormData();
+    images.forEach((img) => formDataObj.append("images", img));
 
     try {
-      const imageData = await uploadImage();
-      if (!imageData) return;
-
-      await API.post("/products", {
-        ...formData,
-        price: parseFloat(formData.price),
-        discountPrice: parseFloat(formData.discountPrice) || 0,
-        imageUrl: imageData.url,
-        imagePublicId: imageData.public_id,
+      const { data } = await API.post("/upload", formDataObj, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-
-      alert("✅ Product added successfully!");
-      router.push("/admin/dashboard/products");
+      return data.images; // [{ url, public_id }]
     } catch (err) {
-      if (err instanceof Error) alert(err.message);
-      else alert("Something went wrong");
-    } finally {
-      setLoading(false);
+      console.error("Image upload error:", err);
+      alert("Failed to upload product images");
+      return [];
     }
   };
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const uploadedImages = await uploadImages();
+    if (uploadedImages.length === 0) return;
+
+    await API.post("/products", {
+      ...formData,
+      price: Number(formData.price),
+      discountPrice: Number(formData.discountPrice) || 0,
+      images: uploadedImages,
+    });
+
+    alert("✅ Product added successfully!");
+    router.push("/admin/dashboard/products");
+  } catch (error: unknown) {
+    let message = "Something went wrong";
+
+    // Type guard for AxiosError
+    if (error instanceof AxiosError) {
+      message = error.response?.data?.message || message;
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
+
+    console.error("PRODUCT CREATE ERROR:", error);
+    alert(message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Add New Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* NAME */}
         <input
           name="name"
           placeholder="Product name"
@@ -128,6 +146,7 @@ export default function AddProductPage() {
           required
         />
 
+        {/* IMAGE INSERT FOR DESCRIPTION */}
         <label className="block mb-2">
           Insert Image in Description:
           <input
@@ -141,8 +160,12 @@ export default function AddProductPage() {
           />
         </label>
 
-        <div className="border rounded">{editor && <EditorContent editor={editor} />}</div>
+        {/* TIPTAP EDITOR */}
+        <div className="border rounded">
+          {editor && <EditorContent editor={editor} />}
+        </div>
 
+        {/* PRICE */}
         <input
           type="number"
           name="price"
@@ -153,6 +176,7 @@ export default function AddProductPage() {
           required
         />
 
+        {/* DISCOUNT PRICE */}
         <input
           type="number"
           name="discountPrice"
@@ -164,6 +188,7 @@ export default function AddProductPage() {
           max={parseFloat(formData.price) || undefined}
         />
 
+        {/* CATEGORY */}
         <select
           name="category"
           value={formData.category}
@@ -179,6 +204,7 @@ export default function AddProductPage() {
           <option value="accessories">General Accessories</option>
         </select>
 
+        {/* BRAND */}
         <input
           name="brand"
           placeholder="Brand"
@@ -187,6 +213,7 @@ export default function AddProductPage() {
           className="w-full p-2 border rounded"
         />
 
+        {/* STOCK */}
         <input
           type="number"
           name="stock"
@@ -196,6 +223,7 @@ export default function AddProductPage() {
           className="w-full p-2 border rounded"
         />
 
+        {/* FEATURED */}
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -206,12 +234,32 @@ export default function AddProductPage() {
           <span>Featured product</span>
         </label>
 
+        {/* MULTIPLE IMAGES */}
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setImage(e.target.files?.[0] || null)}
+          multiple
+          onChange={(e) =>
+            setImages(e.target.files ? Array.from(e.target.files) : [])
+          }
           className="w-full border p-2 rounded"
         />
+
+        {/* IMAGE PREVIEWS */}
+        {images.length > 0 && (
+          <div className="flex gap-2 mt-2 overflow-x-auto">
+            {images.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 flex-shrink-0">
+                <Image
+                  src={URL.createObjectURL(img)}
+                  alt={`preview ${idx + 1}`}
+                  fill
+                  className="object-cover rounded"
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         <button
           type="submit"
