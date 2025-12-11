@@ -8,7 +8,7 @@ export interface CartItem {
   price: number;            // original price
   discountPrice?: number;   // optional discounted price
   category: string;
-  image?: { url: string };
+  images: { url: string; public_id: string }[];
   quantity: number;
 }
 

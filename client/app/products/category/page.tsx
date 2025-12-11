@@ -134,7 +134,7 @@ export default function CategoryPage() {
               >
                 <div className="relative w-full h-56 bg-gray-100 group">
                   <Image
-  src={product.images && product.images.length > 0 ? product.images[0].url : "/placeholder.png"}
+  src={product.images && product.images.length > 0 ? product.images[1].url : "/placeholder.png"}
   alt={product.name}
   fill
   className="object-cover rounded"
@@ -175,7 +175,7 @@ export default function CategoryPage() {
       ₦{product.price.toLocaleString()}
     </span>{" "}
    <span className="text-green-600 ml-1">
-  ({ (product.discountPercentage ?? 0)}% )
+  ({(product.discountPercentage ?? 0)}% )
 </span>
 
   </p>

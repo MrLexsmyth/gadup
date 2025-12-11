@@ -101,7 +101,7 @@ export default function ProductsPage() {
                     ₦{product.price.toLocaleString()}
                   </span>{" "}
                   <span className="text-green-600 ml-1">
-                    ({100 - (product.discountPercentage ?? 0)}% off)
+                    ({ (product.discountPercentage ?? 0)}% off)
                   </span>
                 </p>
               ) : (

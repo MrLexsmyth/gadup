@@ -86,14 +86,16 @@ export default function CartDrawer({
                 className="flex items-center justify-between gap-3 border-b pb-3"
               >
                 {/* Product Image */}
-                {item.image?.url && (
-                  <Image
-                    src={item.image.url}
-                    alt={item.name}
-                    width={70}
-                    height={70}
-                    className="rounded-md object-cover"
-                  />
+                {item.images && item.images.length > 0 && (
+                  
+                   <Image
+                                    src={item.images && item.images.length > 0 ? item.images[1].url : "/placeholder.png"}
+                                    alt={item.name}
+                                     width={70}
+                                     height={70}
+                                     className="rounded-md object-cover"
+                                    
+                                  />
                 )}
 
                 {/* Product Info */}

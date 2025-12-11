@@ -14,7 +14,8 @@ interface Product {
   discountPrice?: number;
   discountPercentage?: number;
   category: string;
-  image?: { url: string };
+  
+  images: { url: string; public_id: string }[];
   stock: number;   
 }
 
@@ -89,11 +90,12 @@ const handleAddToCart = (product: Product) => {
         {products.map((product) => (
           <div
             key={product._id}
-            className="flex-shrink-0 w-[350px] h-[350px] rounded-lg p-4 shadow-sm hover:shadow-md transition"
+            className="flex-shrink-0 w-[350px] h-[370px] rounded-lg p-4 shadow-sm hover:shadow-md transition"
           >
             <div className="relative w-full h-[240px] bg-[#f5f5f5] rounded overflow-hidden group">
-              <Image
-                src={product.image?.url || "/placeholder.jpg"}
+             
+                   <Image
+                src={product.images && product.images.length > 0 ? product.images[1].url : "/placeholder.png"}
                 alt={product.name}
                 fill
                 className="object-cover rounded"
@@ -136,7 +138,7 @@ const handleAddToCart = (product: Product) => {
       ₦{product.price.toLocaleString()}
     </span>{" "}
    <span className="text-green-600 ml-1">
-  ({100 - (product.discountPercentage ?? 0)}% off)
+  ({(product.discountPercentage ?? 0)}% off)
 </span>
 
   </p>

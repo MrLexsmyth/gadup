@@ -14,7 +14,7 @@ interface Product {
    discountPrice?: number;
   discountPercentage?: number;
   category: string;
-  image?: { url: string };
+images: { url: string; public_id: string }[]; 
 }
 
 export default function CategoryPage() {
@@ -83,11 +83,11 @@ export default function CategoryPage() {
             >
               {/* Product image */}
               <div className="relative w-full h-[220px] bg-[#f5f5f5] rounded overflow-hidden">
-                <Image
-                  src={product.image?.url || "/placeholder.jpg"}
+                    <Image
+                  src={product.images && product.images.length > 0 ? product.images[1].url : "/placeholder.png"}
                   alt={product.name}
                   fill
-                  className="object-cover rounded transition-transform duration-300 group-hover:scale-105"
+                  className="object-cover rounded"
                 />
 
                 {/* Add to Cart overlay button */}
@@ -127,7 +127,7 @@ export default function CategoryPage() {
       ₦{product.price.toLocaleString()}
     </span>{" "}
    <span className="text-green-600 ml-1">
-  ({100 - (product.discountPercentage ?? 0)}% )
+  ({(product.discountPercentage ?? 0)}% )
 </span>
 
   </p>
