@@ -299,7 +299,15 @@ export default function CheckoutPage() {
               {cart.map((item) => (
                 <div key={item._id} className="flex items-center justify-between gap-4 border-b-[0.5px] border-gray-300 pb-2">
                   <div className="flex items-center gap-2">
-                    {item.image?.url && <Image src={item.image.url} alt={item.name} width={90} height={80} className="rounded object-cover" />}
+{item.images?.length > 0 && (
+  <Image
+    src={item.images[1].url}
+    alt={item.name}
+    width={90}
+    height={80}
+    className="rounded object-cover"
+  />
+)}
                     <div>
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm text-gray-800 font-semibold">₦{item.price.toLocaleString()}</p>
