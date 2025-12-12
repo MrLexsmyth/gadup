@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import API from "../lib/api"; // Axios instance
@@ -90,7 +91,7 @@ const handleAddToCart = (product: Product) => {
         {products.map((product) => (
           <div
             key={product._id}
-            className="flex-shrink-0 w-[350px] h-[370px] rounded-lg p-4 shadow-sm hover:shadow-md transition"
+            className="flex-shrink-0 w-[350px] h-[400px] rounded-lg p-4 shadow-sm hover:shadow-md transition"
           >
             <div className="relative w-full h-[240px] bg-[#f5f5f5] rounded overflow-hidden group">
              
@@ -147,6 +148,12 @@ const handleAddToCart = (product: Product) => {
     ₦{product.price.toLocaleString()}
   </p>
 )}
+ <Link
+                    href={`/products/details/${product._id}`}
+                    className="text-sm text-[#00817c] font-medium hover:underline block mt-2"
+                  >
+                    View Details
+                  </Link>
           </div>
         ))}
       </div>

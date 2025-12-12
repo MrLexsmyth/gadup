@@ -43,15 +43,16 @@ export const verifyPayment = async (req, res) => {
         const product = products.find((p) => p._id.toString() === item._id);
         const priceToUse = product.discountPrice > 0 ? product.discountPrice : product.price;
 
-        return {
-          _id: product._id,
-          name: product.name,
-          price: priceToUse,
-          quantity: item.quantity,
-          image: { url: product.image.url },
-          discountPrice: product.discountPrice,
-          discountPercentage: product.discountPercentage,
-        };
+      return {
+  _id: product._id,
+  name: product.name,
+  price: priceToUse,
+  quantity: item.quantity,
+  image: { url: product.images?.[0]?.url || "" },
+  discountPrice: product.discountPrice,
+  discountPercentage: product.discountPercentage,
+};
+
       });
 
       // 🔥 REDUCE STOCK FOR EACH PRODUCT ORDERED
