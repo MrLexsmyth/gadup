@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 
-// Generate JWT + Set Cookie
+
 
 const generateToken = (res, userId) => {
   const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -13,7 +13,7 @@ const generateToken = (res, userId) => {
 
 res.cookie("jwt", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", // true in production
+  secure: process.env.NODE_ENV === "production", 
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",       
     maxAge: 3 * 24 * 60 * 60 * 1000, 
   });
@@ -21,7 +21,7 @@ res.cookie("jwt", token, {
   return token;
 };
 
-// REGISTER USER
+
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -33,7 +33,7 @@ export const registerUser = async (req, res) => {
 
     const user = await User.create({ name, email, password });
 
-    // set cookie
+  
     const token = generateToken(res, user._id);
 
     res.status(201).json({

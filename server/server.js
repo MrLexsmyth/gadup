@@ -16,20 +16,20 @@ import verifyPaymentRoutes from "./routes/verifyPayment.js";
 dotenv.config();
 const app = express();
 
-app.set("trust proxy", 1); // required for cookies on Render HTTPS
+app.set("trust proxy", 1);
 
-// CORS MUST COME BEFORE JSON + COOKIEPARSER
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-// DB
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error(err));
 
-// Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);

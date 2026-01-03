@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { protect } from "../middleware/authMiddleware.js";
+import {loginLimiter, signupLimiter,} from "../middleware/rateLimiters.js";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ const getCookieOptions = () => ({
 // =======================
 // SIGNUP
 // =======================
-router.post("/signup", async (req, res) => {
+router.post("/signup", signupLimiter, async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
@@ -36,9 +37,16 @@ router.post("/signup", async (req, res) => {
     const user = await User.create({ name, email, password });
     if (!user) return res.status(400).json({ message: "Invalid user data" });
 
-    const token = generateToken(user._id);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "3d",
+    });
 
-    res.cookie("jwt", token, getCookieOptions());
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(201).json({
       _id: user._id,
@@ -52,10 +60,11 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+
 // =======================
 // LOGIN
 // =======================
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -67,8 +76,16 @@ router.post("/login", async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    const token = generateToken(user._id);
-    res.cookie("jwt", token, getCookieOptions());
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "3d",
+    });
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    });
 
     res.json({
       _id: user._id,
@@ -81,6 +98,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // =======================
 // LOGOUT
